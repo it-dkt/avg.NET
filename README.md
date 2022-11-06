@@ -1,5 +1,8 @@
 # Overview
-**avg.NET** is a framework for creating a **command selecting style adverture game** using ASP.NET Core and Javascript.
+**avg.NET** is a framework for creating a **command selecting style adverture game** using
+ - ASP.NET
+ - Javascript
+ - MySQL database
 
 You can create your own game only by preparing
 - some database records
@@ -23,7 +26,7 @@ http://localhost/scenes/00001.html
 
 ## Development
 You can develop your own game using `docker compose` as discribed above.  
-But you can also debug the game as ordinary ASP.NET web application, using [Visual Studio](https://visualstudio.microsoft.com/) or [Visual Studio Code](https://azure.microsoft.com/en-us/products/visual-studio-code/).  
+But you can also debug the game as ordinary ASP.NET web application, using .NET SDK with [Visual Studio](https://visualstudio.microsoft.com/) or [Visual Studio Code](https://azure.microsoft.com/en-us/products/visual-studio-code/).  
 In that case, you need MySQL5.7 database server (locally or as a Docker container).
 
 ### If you run the database server separately (not using `docker compose`)
@@ -86,6 +89,7 @@ Example:
 The initial value of player's flag is 0.
 
 # Tables
+Understanding the concepts of each tables is also important for using this framework.  
 Definitions of each tables are discribed in `mysql-setting/initdb.d/init-avg-db.sql` as CREATE TABLE statements.  
 So, only summaries of each tables are described below.
 ## COMMAND
@@ -132,6 +136,35 @@ If the EVENT column has the value 'getCommands', and the message is shown, the J
 So, the function need to be defined in the *avg.js* or scene specific `.js` file in the *scene.js* folder.  
 (The function `getCommands()` is defined in *avg.js*, so it doesn't need specific `.js` file.)
 
+### TEXT column
+The text content of the message.  
+
+TEXT has some control characters shown below.
+| control character           | meaning  |
+|:-------------------:|:---------|
+|^| The point that the associated event should be executed |
+|@| Begin a new line |
+|;| Stop showing the message at this point, and show the link button to continue | 
+
+
+For example, if the TEXT value is 'Hello@world!;Hello avg!^',  
+at first,  
+```
+Hello
+world!
+▼
+```
+is shown. ▼ is the link button. 
+The player clicks the ▼,  
+```
+Hello avg!
+```
+is shown.  
+Then, the associated event (defined in EVENT column) is executed, because the TEXT value has a '^' character at the end.  
+
+There are no escape sequences for these control characters. So you can't use them as a part of message content.  
+But still useful for showing the messages more readably.
+
 ### Initial message of the scene
 Initial message of the scene is the message shown when the player come to the scene.  
 And it is the record of the MESSSAGE table that has
@@ -162,4 +195,3 @@ And it is the record of `message` table that has
 - SCENE_ID: '00000' and
 - COMMAND_ID: id of the command the player selected. and
 - TARGET_ID: '999'
-
