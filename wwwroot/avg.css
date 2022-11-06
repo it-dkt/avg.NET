@@ -1,0 +1,60 @@
+/* maze.css */
+* {
+	margin:0; padding:0; text-align:left; 
+	font-family: arial, sans-serif;
+}
+body {
+	background-color:black;
+	color:white;
+}
+
+#main-area {
+	width: 560px;
+}
+
+#image-area {
+	margin: 10px;
+	float: left;
+	border: solid 1px white;
+	width: 358px;
+	height: 180px;
+}
+
+#image-area img.img-base {
+	z-index: 1;
+	position: absolute;
+}
+
+#image-area img.img-person1 {
+	z-index: 2;
+	position: absolute;
+}
+
+#command-area {
+	margin: 10px 10px 10px 0px;
+	padding: 10px;
+	float: right;
+	border: solid 1px white;
+	width: 148px;
+	height: 160px;
+}
+
+#message-area {
+	margin: 0px 10px 10px 10px;
+	padding: 10px;
+	border: solid 1px white;
+	clear: both;
+	width: 518px;
+	height: 80px;
+}
+
+#command-list li {
+	color: white;
+	list-style: none;
+}
+
+#command-list li.touch {
+	color: #000;
+	background-color: white;
+	list-style: none;
+}

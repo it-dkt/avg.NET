@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  avg_db_server:
+    image: mysql:5.7
+    environment:
+       - MYSQL_ROOT_PASSWORD=root
+    volumes:
+       - ./mysql-setting/initdb.d:/docker-entrypoint-initdb.d
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    restart: always
+#    ports:
+#       - "3306:3306"
+  avg_dotnet_app:
+    depends_on:
+       - avg_db_server
+    environment:
+       - ASPNETCORE_ENVIRONMENT=Development
+       - ASPNETCORE_URLS=http://+:80
+    build: .
+    ports:
+       - "80:80"
