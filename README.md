@@ -19,17 +19,17 @@ First, clone this repository.
 ## How to run the sample game locally
 If you have [Docker](https://www.docker.com/) on your PC, you can run the sample game shown above, simply by executing the command  
 `docker compose -f "docker-compose.yaml" up -d --build`  
-at the repository root. (In English, use `docker-compose-en.yaml` instead.)
+at the repository root. (In English, use 'docker-compose-en.yaml' instead.)
 
 Then visit this URL on your browser.  
 http://localhost/scenes/00001.html
 
 ## Development
-You can develop your own game using `docker compose` as discribed above.  
+You can develop your own game using 'docker compose' as discribed above.  
 But you can also debug the game as ordinary ASP.NET web application, using .NET SDK with [Visual Studio](https://visualstudio.microsoft.com/) or [Visual Studio Code](https://azure.microsoft.com/en-us/products/visual-studio-code/).  
 In that case, you need MySQL5.7 database server (locally or as a Docker container).
 
-### If you run the database server separately (not using 'docker compose')
+### If you run the database server separately (not using *docker compose*)
 You need
  1. to set MySQL server character set to 'utf8mb4' and collation to 'utf8mb4_general_ci' (only if you use non ascii characters).
  1. to create database, tables, and records. 
@@ -45,10 +45,10 @@ C# sources for ASP.NET Core web api.
 Usually, you don't need to modify them. But feel free to do it if needed.
 
 ## mysql-setting
-There are two folders, 'initdb.d' and `initdb.en.d`.  
-And there is a file named 'init-avg-db.sql' in each folders.  
-'init-avg-db.sql' is a script file for creating database, tables, and insering data to MySQL database.  
-The file in 'initdb.d' folder is for Japanese, in 'initdb.en.d' is for English.
+There are two folders, *initdb.d* and *initdb.en.d*.  
+And there is a file named *init-avg-db.sql* in each folders.  
+*init-avg-db.sql* is a script file for creating database, tables, and insering data to MySQL database.  
+The file in *initdb.d* folder is for Japanese, in *initdb.en.d* is for English.
 
 If you run the application with 'docker compose', the scrpt will automatically be executed in the MySQL Container.  
 But If you have the database server separetely, you may need to execute script yourself.
@@ -57,8 +57,8 @@ But If you have the database server separetely, you may need to execute script y
 the root folder of The static files.
 ### scenes
 The folder for HTML files for each scenes.  
-Each HTML files should have links to related image files in 'img' folder.  
-And some HTML files may have links to related Javascript files in 'scene-js' folder.
+Each HTML files should have links to related image files in *img* folder.  
+And some HTML files may have links to related Javascript files in *scene-js* folder.
 ### img
 The folder for image files for each scenes.
 ### scene-js
@@ -74,7 +74,7 @@ Usually, you don't need to modify them. But feel free to do it if needed.
 CSS file of this framework.
 Usually, you don't need to modify them. But feel free to do it if needed.
 # Flag
-Understanding the concept of 'flag' is important for using this framework.  
+Understanding the concept of **flag** is important for using this framework.  
 Flag is the value represents the player's state.  
 It is a 64 bit unsigned inetger, but used as a binary.
 
@@ -90,7 +90,7 @@ The initial value of player's flag is 0.
 
 # Tables
 Understanding the concepts of each tables is also important for using this framework.  
-Definitions of each tables are discribed in 'mysql-setting/initdb.d/init-avg-db.sql' as CREATE TABLE statements.  
+Definitions of each tables are discribed in *mysql-setting/initdb.d/init-avg-db.sql* as CREATE TABLE statements.  
 So, only summaries of each tables are described below.
 ## COMMAND
 Command is a thing the player can do at the scene.
@@ -132,7 +132,7 @@ UNSET_FLAG is the opposite, the flag value subtracted from the player's flag whe
 
 ### EVENT column
 The column EVENT is the name of Javascript function should be executed when the message is shown.  
-If the EVENT column has the value 'getCommands', and the message is shown, the Javascript code 'getCommands()' needs to be resolved by the browser's Javascript runtime.  
+If the EVENT column has the value 'getCommands', and the message is shown, the Javascript code *getCommands()* needs to be resolved by the browser's Javascript runtime.  
 So, the function need to be defined in the *avg.js* or in the scene specific .js file in the *scene-js* folder.  
 (The function 'getCommands()' is defined in *avg.js*, so it doesn't need specific .js file.)
 
