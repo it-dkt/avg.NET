@@ -133,7 +133,7 @@ UNSET_FLAG is the opposite, the flag value subtracted from the player's flag whe
 ### EVENT column
 The column EVENT is the name of Javascript function should be executed when the message is shown.  
 If the EVENT column has the value 'getCommands', and the message is shown, the Javascript code 'getCommands()' needs to be resolved by the browser's Javascript runtime.  
-So, the function need to be defined in the *avg.js* or scene specific .js file in the *scene-js* folder.  
+So, the function need to be defined in the *avg.js* or in the scene specific .js file in the *scene-js* folder.  
 (The function 'getCommands()' is defined in *avg.js*, so it doesn't need specific .js file.)
 
 ### TEXT column
