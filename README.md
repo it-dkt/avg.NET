@@ -92,6 +92,12 @@ The initial value of player's flag is 0.
 Understanding the concepts of each tables is also important for using this framework.  
 Definitions of each tables are discribed in *mysql-setting/initdb.d/init-avg-db.sql* as CREATE TABLE statements.  
 So, only summaries of each tables are described below.
+
+## SCENE
+Scene is a set of id and path of the scene.  
+PATH column should have a relative path to its HTML file from *wwwroot*.  
+This table also have FLAG column, but it's not used now.
+
 ## COMMAND
 Command is a thing the player can do at the scene.
 
@@ -195,3 +201,23 @@ And it is the record of `message` table that has
 - SCENE_ID: '00000' and
 - COMMAND_ID: id of the command the player selected. and
 - TARGET_ID: '999'
+
+# Person Mode
+*Person mode* is also important feature of this framework.  
+If the player is with a person at a scene, the person's image should be shown overlaid on the background image of the scene.  
+And the player can select only *person commands*. (ex. show something to the person, talk about something with the person)  
+That is the *person mode*.
+
+First, you have to prepare the person's image. that should have transparent background.  
+To set the *person mode*, you have to add a *img* DOM element for the person's image.  
+The element have to have a css class '*img-person1*', and have to be appended in the element that has id: '*image-area*'.  
+(Now only *img-person1* class is in avg.css. But feel free to add *img-person2* if needed.)
+
+Then, you need to execute the Javascript function *setPersonMode(person_flag)*.  
+Pass the value that you can identify the person from it as the argument.
+
+To unset the *person mode*, remove the *img* element, end execute the function *setPersonMode('')*.  
+The argument is empty string.
+
+See the *wwwroot/scene-js/00002.js* for example of setting and unsetting *person mode*.
+
