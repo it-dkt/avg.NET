@@ -10,8 +10,7 @@ You can create your own game only by preparing
 - some Javascript functions for special events (only if needed)
 
 # Sample adventure game
-- [Japanese](http://avgnet-env.eba-kdrwuz2p.us-west-2.elasticbeanstalk.com/scenes/00001.html)
-- [English](http://avgnet-en-env.us-west-2.elasticbeanstalk.com/scenes/00001.html)
+![sample](./wwwroot/img/sample-img.png)
 
 # Getting started
 First, clone this repository.  
