@@ -1,4 +1,4 @@
-const showPerson = function(){
+sceneEvents.showPerson = function(){
 
 	const img = $('<img>', {
 			src: '../img/person.png',
@@ -13,9 +13,9 @@ const showPerson = function(){
 	getCommands(getSceneId());
 
 	return true;
-}
+};
 
-const hidePerson =  function(){
+sceneEvents.hidePerson = function(){
 
 	// remove person image
 	$('#00002-person1').remove();
@@ -25,4 +25,4 @@ const hidePerson =  function(){
 	getCommands(getSceneId());
 
 	return true;
-}
+};

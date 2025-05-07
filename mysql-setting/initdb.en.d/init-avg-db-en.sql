@@ -64,14 +64,14 @@ INSERT INTO `COMMAND` VALUES
 ('00000', 'TKS', 'show', 2);
 
 INSERT INTO `MESSAGE` VALUES
-('^There is a weird house.', '00001', '000', '000', 0, 0, 0, 'getCommands'),
+('^There is a weird house.', '00001', '000', '000', 0, 0, 0, 'getInitialCommands'),
 ('Check what?', '00000', 'CHK', '000', 0, 0, 0, NULL),
 ('The door is locked.', '00001', 'CHK', '001', 0, 0, 0, NULL),
 ('There is a key.@You''ve got a key!', '00001', 'CHK', '002', 0, 1, 0, NULL),
 ('You opened the door.', '00001', 'USE', '001', 1, 2, 0, NULL),
 ('Use what?', '00000', 'USE', '000', 0, 0, 0, NULL),
 ('Go where?', '00000', 'GOT', '000', 0, 0, 0, NULL),
-('^Here is a living room', '00002', '000', '000', 0, 0, 0, 'getCommands'),
+('^Here is a living room', '00002', '000', '000', 0, 0, 0, 'getInitialCommands'),
 ('There is nothing special.', '00001', 'CHK', '002', 1, 0, 0, NULL),
 ('You unlocked the door, so you can go in the house.', '00001', 'CHK', '001', 2, 0, 0, NULL),
 ('^A man has come.@''What are you doing here?''', '00002', 'CHK', '001', 0, 4, 0, 'showPerson'),
@@ -79,7 +79,7 @@ INSERT INTO `MESSAGE` VALUES
 ('''This is my house.''', '00002', 'TKT', '001', 0, 0, 0, NULL),
 ('''I live in here.''', '00002', 'TKT', '002', 0, 0, 0, NULL),
 ('The door of the house was already unlocked.', '00001', 'USE', '001', 2, 0, 0, NULL),
-('^Here is a bedroom.', '00003', '000', '000', 0, 0, 0, 'getCommands'),
+('^Here is a bedroom.', '00003', '000', '000', 0, 0, 0, 'getInitialCommands'),
 ('^Living room.@There is the man.', '00002', '000', '000', 4, 0, 0, 'showPerson'),
 ('You checked out the pillow. But there was nothing special.', '00003', 'CHK', '001', 0, 0, 0, NULL),
 ('You checked out the bed.  But there was nothing special.', '00003', 'CHK', '002', 0, 0, 0, NULL),

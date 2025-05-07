@@ -344,8 +344,8 @@ const setFlag = function (flag) {
 const execEvent = function () {
 
 	if (eventString) {
-		if (eval('typeof ' + eventString + ' == \'function\'')) {
-			eval(eventString + '();');
+		if (sceneEvents[eventString] !== 'undefined') {
+			sceneEvents[eventString](); 
 		} else {
 			alert(eventString + 'is NOT a function!');
 		}
@@ -357,3 +357,10 @@ const execEvent = function () {
 
 // default event
 const empty_event = function () { };
+
+const sceneEvents = {
+	getInitialCommands: function(){
+
+		getCommands();
+	}
+};

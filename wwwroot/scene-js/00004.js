@@ -1,8 +1,6 @@
-const clearGame = function(){
-
+sceneEvents.clearGame = function(){
 	$('#command-area').html('');
 
 	return true;
-}
-
+};
 
