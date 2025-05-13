@@ -16,7 +16,8 @@ CREATE TABLE `COMMAND` (
   `SCENE_ID` char(5) NOT NULL,
   `COMMAND_ID` char(3) NOT NULL,
   `TEXT` varchar(256) NOT NULL,
-  `SORT_KEY` int(11) NOT NULL,
+  `MODE` int NOT NULL,
+  `SORT_KEY` int NOT NULL,
   PRIMARY KEY (`SCENE_ID`,`COMMAND_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
@@ -57,11 +58,11 @@ CREATE TABLE `TARGET` (
 */
 
 INSERT INTO `COMMAND` VALUES
-('00000', 'CHK', '調べる', 0),
-('00000', 'TKT', '話す', 1),
-('00000', 'USE', '使う', 1),
-('00000', 'GOT', '行く', 10),
-('00000', 'TKS', '見せる', 2);
+('00000', 'CHK', '調べる', 0, 0),
+('00000', 'TKT', '話す', 1, 1),
+('00000', 'USE', '使う', 0, 1),
+('00000', 'GOT', '行く', 2, 10),
+('00000', 'TKS', '見せる', 1, 2);
 
 INSERT INTO `MESSAGE` VALUES
 ('^不気味な洋館があります。', '00001', '000', '000', 0, 0, 0, 'getInitialCommands'),

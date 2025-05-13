@@ -12,22 +12,22 @@ public class CommandController : ControllerBase
     private readonly ILogger<CommandController> _logger;
     private readonly MySqlConnection _connection;
 
-    private const string SQL = 
+    private const string COMMANDS_SQL = 
     	  "SELECT "
-        + " COMMAND_ID, TEXT "
+        + " COMMAND_ID, TEXT, MODE "
         + "FROM COMMAND "
         + "WHERE "
         + " SCENE_ID IN ( @sceneId, '00000' ) AND "
-        + " COMMAND_ID NOT LIKE 'TK%' "
+        + " MODE <> 1 " // NOT person mode
         + "ORDER BY SORT_KEY ";
 
     private const string PERSON_COMMAND_SQL = 
     	  "SELECT "
-        + " COMMAND_ID, TEXT "
+        + " COMMAND_ID, TEXT, MODE "
         + "FROM COMMAND "
         + "WHERE "
         + " SCENE_ID IN ( @sceneId, '00000' ) AND "
-        + " ( COMMAND_ID LIKE 'TK%' OR COMMAND_ID = 'GOT' ) "
+        + " MODE IN (1, 2) "    // for person mode or move 
         + "ORDER BY SORT_KEY ";
 
     public CommandController(ILogger<CommandController> logger, MySqlConnection connection)
@@ -42,7 +42,7 @@ public class CommandController : ControllerBase
         _connection.Open();
 
         using var cmd = _connection.CreateCommand();
-        cmd.CommandText = SQL;
+        cmd.CommandText = COMMANDS_SQL;
         
         cmd.Parameters.Add(new MySqlParameter
         {
@@ -57,7 +57,8 @@ public class CommandController : ControllerBase
             while(await reader.ReadAsync()){
                 command.Commands.Add(new ViewCommandModel{
                     CommandId = reader.GetString("COMMAND_ID"),
-                    Text =  reader.GetString("TEXT")
+                    Text =  reader.GetString("TEXT"),
+                    Mode = reader.GetInt32("MODE")
                 });
             }
         }
@@ -88,7 +89,8 @@ public class CommandController : ControllerBase
             while(await reader.ReadAsync()){
                 command.Commands.Add(new ViewCommandModel{
                     CommandId = reader.GetString("COMMAND_ID"),
-                    Text =  reader.GetString("TEXT")
+                    Text = reader.GetString("TEXT"),
+                    Mode = reader.GetInt32("MODE")
                 });
             }
         }
@@ -116,4 +118,6 @@ public class ViewCommandModel{
     public string TargetId { get; set; } = "";
 
     public string Text { get; set; } = "";
+
+    public int Mode { get; set; } = 0;
 }

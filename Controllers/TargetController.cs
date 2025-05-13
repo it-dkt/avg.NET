@@ -14,13 +14,15 @@ public class TargetController : ControllerBase
 
     private const string GET_TARGET_SQL = 
     	  "SELECT "
-        + "  COMMAND_ID, TARGET_ID, TEXT "
-        + "FROM TARGET "
+        + "  T.COMMAND_ID, T.TARGET_ID, C.MODE, T.TEXT "
+        + "FROM TARGET T, COMMAND C "
         + "WHERE "
-        + " SCENE_ID IN ( @sceneId, '00000' ) AND"
-        + " COMMAND_ID = @commandId AND"
-        + " ( FLAG & @flag ) = FLAG "
-        + " ORDER BY SCENE_ID DESC, FLAG DESC ";
+        + " ( T.SCENE_ID = C.SCENE_ID OR C.SCENE_ID = '00000' ) AND"
+        + " T.COMMAND_ID = C.COMMAND_ID AND"
+        + " T.SCENE_ID IN ( @sceneId, '00000' ) AND"
+        + " T.COMMAND_ID = @commandId AND"
+        + " ( T.FLAG & @flag ) = T.FLAG "
+        + " ORDER BY T.SCENE_ID DESC, T.FLAG DESC ";
 
     private const string GET_COMMAND_INITIAL_MESSAGE_SQL =
     	 "SELECT "
@@ -86,6 +88,7 @@ public class TargetController : ControllerBase
                 target.Commands.Add(new ViewCommandModel{
                     CommandId = reader.GetString("COMMAND_ID"),
                     TargetId = reader.GetString("TARGET_ID"),
+                    Mode = reader.GetInt32("MODE"),
                     Text =  reader.GetString("TEXT")
                 });
             }
@@ -136,5 +139,3 @@ public class TargetResponse
 
     public List<ViewCommandModel> Commands { get; set; } = new List<ViewCommandModel>();
 }
-
-

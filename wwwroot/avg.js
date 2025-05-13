@@ -1,6 +1,6 @@
 // constants
 const FLAG_KEY = 'AVG_FLAG_KEY';
-const COMMAND_ID_MOVE = 'GOT';
+const MOVE_COMMAND_MODE = 2;
 const MESSAGE_WAIT_TIME = 75;
 const MESSAGE_NEWLINE_CHAR = '@';
 const MESSAGE_SPLIT_CHAR = ';'
@@ -75,6 +75,10 @@ const showCommands = function (data, dataType) {
 		const link = $('<li></li>', {
 			id: command.commandId + target_id
 		});
+		
+		// set command mode
+		link.setAttribute('command-mode', command.mode);
+
 		$(link).text(command.text);
 
 		$('#command-list').append(link);
@@ -86,7 +90,10 @@ const showCommands = function (data, dataType) {
 		const command_id = link_id.substring(0, 3);
 		const target_id = link_id.substring(3, 6);
 
-		if (command_id == COMMAND_ID_MOVE && target_id && canIGoTo(target_id)) {
+		// get command mode
+		const mode = element.getAttribute('command-mode');
+
+		if (mode == MOVE_COMMAND_MODE && target_id && canIGoTo(target_id)) {
 			// if the command is the one to go to other scenes, and
 			// if the target_id (where to go) is set, and
 			// if the target is the one that the player is not forbidden,
