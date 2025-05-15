@@ -77,7 +77,7 @@ const showCommands = function (data, dataType) {
 		});
 		
 		// set command mode
-		link.setAttribute('command-mode', command.mode);
+		$(link).attr('command-mode', command.mode);
 
 		$(link).text(command.text);
 
