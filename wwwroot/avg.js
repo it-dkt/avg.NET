@@ -8,6 +8,7 @@ const MESSAGE_EVENT_CHAR = '^';
 const MESSAGE_PART_DIV = 'message-part-'
 const MESSAGE_NEXT_LINK = '▼';
 const DEFAULT_EVENT_STRING = 'empty_event';
+const FORBIDDEN = 1;
 
 // variables
 let splitMsgs = []; 
@@ -57,6 +58,7 @@ const getCommands = function (scene_id) {
 	}
 }
 
+// show commands of the scene or show targets of the seleced command
 const showCommands = function (data, dataType) {
 
 	// show message returned with the commands.
@@ -78,6 +80,10 @@ const showCommands = function (data, dataType) {
 		
 		// set command mode
 		$(link).attr('command-mode', command.mode);
+		// set forbidden flag
+		if(command.forbidden == FORBIDDEN){
+			$(link).attr('forbidden', command.forbidden);
+		}
 
 		$(link).text(command.text);
 
@@ -92,11 +98,13 @@ const showCommands = function (data, dataType) {
 
 		// get command mode
 		const mode = element.getAttribute('command-mode');
+		// get forbidden flag
+		const isForbidden = element.getAttribute('forbidden');
 
-		if (mode == MOVE_COMMAND_MODE && target_id && canIGoTo(target_id)) {
+		if (mode == MOVE_COMMAND_MODE && target_id && isForbidden != FORBIDDEN) {
 			// if the command is the one to go to other scenes, and
-			// if the target_id (where to go) is set, and
-			// if the target is the one that the player is not forbidden,
+			//    the target_id (where to go) is set, and
+			//    the target is not forbidden,
 			// go to the scene. 
 			$(element).on('click', { link_id: link_id }, onChangeScene);
 		} else {
@@ -111,10 +119,6 @@ const showCommands = function (data, dataType) {
 			$(this).removeClass('touch');
 		});
 	});
-}
-
-const canIGoTo = function (target_id) {
-	return target_id.substring(0, 1) != 'F'
 }
 
 const onChangeScene = function (e) {

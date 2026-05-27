@@ -12,18 +12,22 @@ public class TargetController : ControllerBase
     private readonly ILogger<TargetController> _logger;
     private readonly MySqlConnection _connection;
 
-    private const string GET_TARGET_SQL = 
-    	  "SELECT "
-        + "  T.COMMAND_ID, T.TARGET_ID, C.MODE, T.TEXT "
-        + "FROM TARGET T, COMMAND C "
+    private const string GET_TARGET_SQL =
+          "SELECT "
+        + "  T.COMMAND_ID, T.TARGET_ID, T.TEXT, T.FORBIDDEN, "
+        + "  C.MODE "
+        + "FROM TARGET T "
+        + "INNER JOIN COMMAND C ON "    // join COMMAND to get MODE
+        + "  C.SCENE_ID IN ( @sceneId, '00000' ) AND"   // common commands OR scene specific commands.
+        + "  C.COMMAND_ID = @commandId "
         + "WHERE "
-        + " ( T.SCENE_ID = C.SCENE_ID OR C.SCENE_ID = '00000' ) AND"
-        + " T.COMMAND_ID = C.COMMAND_ID AND"
-        + " T.SCENE_ID IN ( @sceneId, '00000' ) AND"
+        + " T.SCENE_ID IN ( @sceneId, '00000' ) AND"    // common targets OR scene specific targets.
         + " T.COMMAND_ID = @commandId AND"
         + " ( T.FLAG & @flag ) = T.FLAG "
-        + " ORDER BY T.SCENE_ID DESC, T.FLAG DESC ";
+        + " ORDER BY T.SCENE_ID DESC, T.TARGET_ID ASC";
 
+    // The Initial Message is the message that asks the player to selecte a target of the command.
+    // ex. When the player selected the 'use' command, the Initial Message may be 'What to use?'.
     private const string GET_COMMAND_INITIAL_MESSAGE_SQL =
     	 "SELECT "
         + " TEXT "
@@ -31,8 +35,10 @@ public class TargetController : ControllerBase
         + "WHERE "
         + " SCENE_ID = '00000' AND "
         + " COMMAND_ID = @commandId AND "
-        + " TARGET_ID = '000' ";
+        + " TARGET_ID = '000' ";    // TARGET_ID of Initial Message is 000
 
+    // The Default Message is the message shown when the command the player selected has no targets.
+    // ex. When the player selected the 'use' command, and the player has no item to use, the Default Message may be 'You have no item to use'.
     private const string GET_COMMAND_DEFAULT_MESSAGE_SQL =
     	 "SELECT "
         + " TEXT "
@@ -40,7 +46,7 @@ public class TargetController : ControllerBase
         + "WHERE "
         + " SCENE_ID = '00000' AND "
         + " COMMAND_ID = @commandId AND "
-        + " TARGET_ID = '999' ";
+        + " TARGET_ID = '999' ";    // TARGET_ID of Default Message is 999
 
     public TargetController(ILogger<TargetController> logger, MySqlConnection connection)
     {
@@ -85,11 +91,13 @@ public class TargetController : ControllerBase
         using(var reader = await targetQuery.ExecuteReaderAsync()){
             hasRows = reader.HasRows;
             while(await reader.ReadAsync()){
-                target.Commands.Add(new ViewCommandModel{
+                target.Commands.Add(new ViewCommandModel
+                {
                     CommandId = reader.GetString("COMMAND_ID"),
                     TargetId = reader.GetString("TARGET_ID"),
                     Mode = reader.GetInt32("MODE"),
-                    Text =  reader.GetString("TEXT")
+                    Text = reader.GetString("TEXT"),
+                    Forbidden = reader.GetInt32("FORBIDDEN")
                 });
             }
         }

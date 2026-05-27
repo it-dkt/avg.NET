@@ -111,7 +111,8 @@ public class CommandResponse
 }
 
 // Model for a command shown in client view
-public class ViewCommandModel{
+public class ViewCommandModel
+{
 
     public string CommandId { get; set; } = "";
 
@@ -120,4 +121,6 @@ public class ViewCommandModel{
     public string Text { get; set; } = "";
 
     public int Mode { get; set; } = 0;
+
+    public int Forbidden { get; set; } = 0;
 }

@@ -1,3 +1,6 @@
+# Latest Version
+latest version is 2.0. Version 2.0 is not compatible with 1.0.
+
 # Overview
 **avg.NET** is a framework for creating a **command selecting style adverture game** using
  - ASP.NET
@@ -104,9 +107,17 @@ The records those have specific SCENE_ID are the things the player can do only a
 And the records those have SCENE_ID = '00000' are common commands (e.g. use, check) the player can do at all scenes.  
 So, at a scene, both the common commands and the scene specific commands are shown to the player.
 
+COMMNAD table has also the MODE column, can have values:
+- 0: Normal Command
+- 1: Person Command (The command can be used only in Person Mode)
+- 2: Move Command (The command to go to other scenes)
+
 ## TARGET
 Target is a thing can be a target of the command the player selects.  
 When the player is in a room at a scene, and if the player selects the command 'check', the targets may be the stuff in the room. (ex. chair, table, bed ...)
+
+There are common targets. Those records have the SCENE_ID = '00000' like common commands.
+When the player has an item, and if the player selects the command 'use', The item can be targets at all scenes.
 
 The column FLAG is the condition whether the target is shown or not. It is judged by a logical operation discribed the 'Flag' section.
 
@@ -115,7 +126,7 @@ But a record that has FLAG = 8 (1000 in binary) is not shown.
 
 If the FLAG of the record is NULL, then the target is always shown at the scene. 
 
-The column DEST_SCENE_ID is specific of the COMMAND_ID: 'GOT' (the command to go to another scene).  
+The column DEST_SCENE_ID is only for targets that relates to the command that has MODE=1 (the command to go to another scene).  
 And it is the SCENE_ID the player go to.
 
 ## MESSSAGE
@@ -220,3 +231,5 @@ The argument is empty string.
 
 See the *wwwroot/scene-js/00002.js* for example of setting and unsetting *person mode*.
 
+# data-sheet.xlsx
+data-sheet.xlsx will help you to write insert statements for each tables.
