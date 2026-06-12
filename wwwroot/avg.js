@@ -29,6 +29,7 @@ const initScene = function () {
 	$('#message-area').html('Loading...');
 
 	// get initial message of the scene
+	isOk = false;
 	getMessage(scene_id, '000', '000', flag);
 }
 
@@ -84,6 +85,10 @@ const showCommands = function (data, dataType) {
 		if(command.forbidden == FORBIDDEN){
 			$(link).attr('forbidden', command.forbidden);
 		}
+
+		// set disabled if locked
+		if(!isOk)
+			link.addClass('disabled');
 
 		$(link).text(command.text);
 
@@ -269,7 +274,7 @@ const showMessage = function (data) {
 }
 
 // show messages splited by the defined charactor
-const showMessagePart = function (part_index) {
+const showMessagePart = function (part_index, eventIndex = 0) {
 
 	const div_selector = '#message-area';
 	const messagePart = splitMsgs[part_index];
@@ -278,7 +283,8 @@ const showMessagePart = function (part_index) {
 	// clear message area 
 	$(div_selector).html('');
 
-	index = 0;
+	let index = 0;
+	let eventCount = 0;
 
 	// show charactors one by one
 	const write_text = function () {
@@ -288,11 +294,13 @@ const showMessagePart = function (part_index) {
 			$(div_selector).html($(div_selector).html() + '<br/>');
 		} else if (messagePart.charAt(index) == MESSAGE_EVENT_CHAR) {
 			// execute event
-			execEvent();
+			//console.log(`# index=${index} executing eventIndex=${eventIndex + eventCount}`);
+			execEvent(eventIndex + eventCount);
+			eventCount++;
 		} else {
 			// normal charactors
 			$(div_selector).html($(div_selector).html() + messagePart.charAt(index));
-			//console.log(index + ' : ' + text.charAt(index));
+			//console.log(index + ' : ' + messagePart.charAt(index));
 		}
 
 		index++;
@@ -307,7 +315,7 @@ const showMessagePart = function (part_index) {
 				next_link.attr('href', 'javascript:void(0);');
 				next_link.text(MESSAGE_NEXT_LINK);
 				next_link.on('click', function () {
-					showMessagePart(part_index + 1);
+					showMessagePart(part_index + 1, eventIndex + eventCount);
 				});
 
 				$(div_selector).append($('<br/>'));
@@ -315,6 +323,12 @@ const showMessagePart = function (part_index) {
 			} else {
 				// if all of parts are shown, unlock command
 				isOk = true;
+				// remove disabled class
+				$('#command-list li').each(function(i, elm){
+					$(elm).removeClass('disabled');
+				});
+				// clear events
+				eventString = DEFAULT_EVENT_STRING;
 			}
 		}
 	}
@@ -352,17 +366,16 @@ const setFlag = function (flag) {
 	}
 }
 
-const execEvent = function () {
+const execEvent = function (eventIndex) {
 
 	if (eventString) {
-		if (sceneEvents[eventString] !== 'undefined') {
-			sceneEvents[eventString](); 
+		//console.log(`# eventString=${eventString} eventIndex=${eventIndex}`)
+		let eventArray = eventString.split(',');
+		if (sceneEvents[eventArray[eventIndex]] !== 'undefined') {
+			sceneEvents[eventArray[eventIndex]](); 
 		} else {
-			alert(eventString + 'is NOT a function!');
+			alert(eventArray[eventIndex] + 'is NOT a function!');
 		}
-
-		// default
-		eventString = DEFAULT_EVENT_STRING;
 	}
 }
 
