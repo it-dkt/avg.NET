@@ -386,5 +386,170 @@ const sceneEvents = {
 	getInitialCommands: function(){
 
 		getCommands();
+	},
+	showSaveDialog: function(){
+
+		showSaveDialog();
+	},
+	showLoadDialog: function(){
+
+		showLoadDialog();
 	}
+};
+
+/* --------------------------------------------------
+* code for save/load below
+* -------------------------------------------------- */
+
+const SLOT_COUNT = 3;
+const STORAGE_KEY = 'avg_save_slot_';
+
+function toast(msg) {
+	let el = document.querySelector('.avg-save-toast');
+	if (!el) {
+		el = document.createElement('div');
+		el.className = 'avg-save-toast';
+		document.body.appendChild(el);
+	}
+	el.textContent = msg;
+	el.classList.add('show');
+	setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+function loadSlot(slot) {
+	const raw = localStorage.getItem(STORAGE_KEY + slot);
+	return raw ? JSON.parse(raw) : null;
+}
+
+function saveSlot(slot, flag, sceneId) {
+	const data = {
+		flag,
+		sceneId,
+		savedAt: new Date().toISOString()
+	};
+	localStorage.setItem(STORAGE_KEY + slot, JSON.stringify(data));
+}
+
+function allSlots() {
+	return Array.from({ length: SLOT_COUNT }, (_, i) => {
+		const slot = i + 1;
+		const data = loadSlot(slot);
+		return { slot, ...(data ?? { flag: 0, sceneId: '', savedAt: null }) };
+	});
+}
+
+function fmtDate(iso) {
+	if (!iso) return '---';
+	const d = new Date(iso);
+	const pad = n => String(n).padStart(2, '0');
+	return `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())} `
+			+ `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+
+// dialog common base
+function buildOverlay() {
+	const overlay = document.createElement('div');
+	overlay.id = 'avg-save-overlay';
+	const dialog = document.createElement('div');
+	dialog.id = 'avg-save-dialog';
+	overlay.appendChild(dialog);
+	document.body.appendChild(overlay);
+	overlay.addEventListener('click', e => {
+		if (e.target === overlay) overlay.remove();
+	});
+	return dialog;
+}
+
+// save dialog
+window.showSaveDialog = function () {
+	document.getElementById('avg-save-overlay')?.remove();
+
+	const dialog = buildOverlay();
+	dialog.innerHTML = '<h2>💾 Save</h2>';
+
+	allSlots().forEach(s => {
+		const isEmpty = !s.sceneId;
+		const row = document.createElement('div');
+		row.className = 'avg-save-slot';
+
+		const info = document.createElement('div');
+		info.className = 'avg-save-slot-info';
+		info.innerHTML = `<span><strong>Slot ${s.slot}</strong></span>`
+		+ (isEmpty
+			? '<span>Empty</span>'
+			: `<span>${fmtDate(s.savedAt)}</span>`);
+
+		const btn = document.createElement('button');
+		btn.className = 'avg-save-slot-btn do-save';
+		btn.textContent = isEmpty ? 'Write' : 'Overwrite';
+
+		btn.addEventListener('click', () => {
+			const flag = getFlag();
+			const sceneId = getSceneId();
+
+			if (!sceneId) { toast('ERROR: Can not get scene id.'); return; }
+			saveSlot(s.slot, flag, sceneId);
+			toast(`Saved to slot ${s.slot}.`);
+			document.getElementById('avg-save-overlay')?.remove();
+		});
+
+		row.appendChild(info);
+		row.appendChild(btn);
+		dialog.appendChild(row);
+	});
+
+	const closeBtn = document.createElement('button');
+	closeBtn.id = 'avg-save-close';
+	closeBtn.textContent = 'Cancel';
+	closeBtn.addEventListener('click', () => document.getElementById('avg-save-overlay')?.remove());
+	dialog.appendChild(closeBtn);
+};
+
+// load dialog
+window.showLoadDialog = function () {
+	document.getElementById('avg-save-overlay')?.remove();
+
+	const dialog = buildOverlay();
+	dialog.innerHTML = '<h2>📂 Load</h2>';
+
+	allSlots().forEach(s => {
+		const isEmpty = !s.sceneId;
+		const row = document.createElement('div');
+		row.className = 'avg-save-slot';
+
+		const info = document.createElement('div');
+		info.className = 'avg-save-slot-info';
+		info.innerHTML = `<span><strong>Slot ${s.slot}</strong></span>`
+		+ (isEmpty
+			? '<span>Empty</span>'
+			: `<span>${fmtDate(s.savedAt)}</span>`);
+
+		const btn = document.createElement('button');
+		btn.className = 'avg-save-slot-btn do-load';
+		btn.textContent = 'Load';
+		if (isEmpty) btn.disabled = true;
+
+		btn.addEventListener('click', () => {
+			const data = loadSlot(s.slot);
+			if (!data) { toast('ERROR: Can not find the save data.'); return; }
+
+			setFlag(data.flag);
+
+			document.getElementById('avg-save-overlay')?.remove();
+			toast(`Loaded from slot ${s.slot}.`);
+
+			window.location.href = `/scenes/${data.sceneId}.html`;
+		});
+
+		row.appendChild(info);
+		row.appendChild(btn);
+		dialog.appendChild(row);
+	});
+
+	const closeBtn = document.createElement('button');
+	closeBtn.id = 'avg-save-close';
+	closeBtn.textContent = 'Cancel';
+	closeBtn.addEventListener('click', () => document.getElementById('avg-save-overlay')?.remove());
+	dialog.appendChild(closeBtn);
 };
