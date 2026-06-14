@@ -1,5 +1,11 @@
 # Latest Version
-latest version is 2.0. Version 2.0 is not compatible with 1.0.
+The Latest version is 2.5.
+
+Features of version 2.5:
+- save/load
+- multi events in one message
+
+Version 2.0 or later is not compatible with 1.0.
 
 # Overview
 **avg.NET** is a framework for creating a **command selecting style adverture game** using
@@ -148,9 +154,17 @@ UNSET_FLAG is the opposite, the flag value subtracted from the player's flag whe
 
 ### EVENT column
 The column EVENT is the name of Javascript function should be executed when the message is shown.  
-If the EVENT column has the value 'getCommands', and the message is shown, the Javascript code *getCommands()* needs to be resolved by the browser's Javascript runtime.  
-So, the function need to be defined in the *avg.js* or in the scene specific .js file in the *scene-js* folder.  
-(The function 'getCommands()' is defined in *avg.js*, so it doesn't need specific .js file.)
+If the EVENT column has the value 'getCommands', and the message is shown, the function *getCommands()* needs to be resolved as a Javascript function.  
+So, the function need to be defined in the *avg.js* or in the scene specific .js file in the *scene-js* folder, as the child of the object *sceneEvents*.  
+Some event functions are defined in *avg.js*, so they can be used as event by default.
+
+One message can have multi events. For example, if EVENT column has the value 'func1,func2',
+and TEXT column has the value '^msg1^msg2',
+the messages and events are shown as the order:
+1. event 'func1' are executed
+1. text 'msg1' is shown
+1. event 'func2' are executed
+1. text 'msg2' is shown
 
 ### TEXT column
 The text content of the message.  
@@ -230,6 +244,13 @@ To unset the *person mode*, remove the *img* element, end execute the function *
 The argument is empty string.
 
 See the *wwwroot/scene-js/00002.js* for example of setting and unsetting *person mode*.
+
+# Save/load
+The events 'showSaveDialog', 'showLoadDialog' are defined in *avg.js*.
+When they executed as the message event, save/load dialog box is shown.
+Then player can save current flag value and scene, of load them.
+
+Player's datas are saved in the blose local storage.
 
 # data-sheet.xlsx
 data-sheet.xlsx will help you to write insert statements for each tables.

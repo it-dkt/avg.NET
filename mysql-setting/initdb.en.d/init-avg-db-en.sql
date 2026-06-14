@@ -64,7 +64,8 @@ VALUES
 ('00000','TLK','talk',1,1),
 ('00000','USE','use',0,1),
 ('00000','MOV','go',2,10),
-('00000','SHW','show',1,2);
+('00000','SHW','show',1,2),
+('00000','CNF','config',2,20);
 
 INSERT INTO `MESSAGE` (`SCENE_ID`, `COMMAND_ID`, `TARGET_ID`, `FLAG`, `SET_FLAG`, `UNSET_FLAG`, `EVENT`, `TEXT`)
 VALUES
@@ -80,6 +81,9 @@ VALUES
 ('00000','TLK','999',0,0,0,NULL,'There is nobody to talk.'),
 ('00000','MOV','999',0,0,0,NULL,'There is no place to go.'),
 ('00000','SHW','999',0,0,0,NULL,'You have nothing to show.'),
+('00000','CNF','000',0,0,0,NULL,'Config what?'),
+('00000','CNF','SAV',0,0,0,'showSaveDialog','^'),
+('00000','CNF','LOA',0,0,0,'showLoadDialog','^'),
 ('00001','000','000',0,0,0,'getInitialCommands','^There is a weird house.'),
 ('00001','CHK','001',0,0,0,NULL,'The door is locked.'),
 ('00001','CHK','002',0,1,0,NULL,'There is a key.@You''ve got a key!'),
@@ -104,7 +108,7 @@ VALUES
 ('00003','CHK','002',0,0,0,NULL,'You checked out the bed.  But there was nothing special.'),
 ('00003','CHK','003',0,8,0,NULL,'There is a book in the fireplace.@You''ve got a book!'),
 ('00003','CHK','003',8,0,0,NULL,'There is nothing no more.'),
-('00004','000','000',0,0,0,'clearGame','^You went home with a treasure.@--The End--');
+('00004','000','000',0,0,0,'clearGame,backTo00001','^You went home with a treasure.@--The end--;^');
 
 INSERT INTO `SCENE` (`SCENE_ID`, `FLAG`, `PATH`)
 VALUES
@@ -119,6 +123,8 @@ VALUES
 ('00000','SHW','002',0,8,'book',NULL),
 ('00000','USE','001',0,1,'key',NULL),
 ('00000','USE','002',0,8,'book',NULL),
+('00000','CNF','SAV',1,0,'save',NULL),
+('00000','CNF','LOA',1,0,'load',NULL),
 ('00001','CHK','001',0,0,'house',NULL),
 ('00001','CHK','002',0,0,'around there',NULL),
 ('00001','CHK','003',0,128,'pocket',NULL),

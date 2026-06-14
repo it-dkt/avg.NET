@@ -4,3 +4,8 @@ sceneEvents.clearGame = function(){
 	return true;
 };
 
+sceneEvents.backTo00001 = function(){
+	setFlag('');
+	window.location.href = '/scenes/00001.html';
+	return true;
+}
