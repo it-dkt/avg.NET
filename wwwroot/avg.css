@@ -37,6 +37,20 @@ body {
 	border: solid 1px white;
 	width: 148px;
 	height: 160px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	scrollbar-width: thin;
+	scrollbar-color: white black;
+}
+
+#command-area::-webkit-scrollbar {
+	width: 6px;
+}
+#command-area::-webkit-scrollbar-track {
+	background: black;
+}
+#command-area::-webkit-scrollbar-thumb {
+	background: white;
 }
 
 #message-area {
