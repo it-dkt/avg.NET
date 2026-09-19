@@ -1,9 +1,14 @@
 # Latest Version
-The Latest version is 2.5.
+The Latest version is 2.6.
 
-Features of version 2.5:
-- save/load
-- multi events in one message
+- 2.6
+  - background music
+  - scroll in command area
+- 2.5:
+  - save/load
+  - multi events in one message
+- 2.0
+  - changed table schema
 
 Version 2.0 or later is not compatible with 1.0.
 
@@ -18,9 +23,6 @@ You can create your own game only by preparing
 - HTML files and image files for each scenes in your game
 - some Javascript functions for special events (only if needed)
 
-# Sample adventure game
-![sample](./wwwroot/img/sample-img.png)
-
 # Getting started
 First, clone this repository.  
 
@@ -31,21 +33,42 @@ at the repository root. (In English, use 'docker-compose-en.yaml' instead.)
 
 Then visit this URL on your browser.  
 http://localhost/scenes/00001.html
+  
+This page will be shown. (This is the english version using 'docker-compose-en.yaml')
+![sample](./wwwroot/img/sample-img.png)
 
-## Development
+# Development
 You can develop your own game using 'docker compose' as discribed above.  
 But you can also debug the game as ordinary ASP.NET web application, using .NET SDK with [Visual Studio](https://visualstudio.microsoft.com/) or [Visual Studio Code](https://azure.microsoft.com/en-us/products/visual-studio-code/).  
 In that case, you need MySQL5.7 database server (locally or as a Docker container).
 
-### If you run the database server separately (not using *docker compose*)
-You need
- 1. to set MySQL server character set to 'utf8mb4' and collation to 'utf8mb4_general_ci' (only if you use non ascii characters).
- 1. to create database, tables, and records. 
- 1. to modify the 'ConnectionString' section in 'appsettings.json' to connect your database server.
+## If you run the database server separately (not using *docker compose*)
+
+- All MySQL settings and table schemas are discribed in [init-avg-db.sql](./mysql-setting/initdb.d/init-avg-db.sql).
+- You can modify DB connection informations (db name, username...) as you like. But they need to match with [appsettings.json](./appsettings.json).
+- MySQL server needs only be connected from the C# webapi server in this framework. But Take care about dealing with password. 
+
+## How to connect to MySQL docker container
+Open [docker-compose.yaml](./docker-compose.yaml), remove comment characters of `ports` setting. Then, you can connect MySQL server using MySQL client.
 
 ## Environment
 - .NET6.0 SDK
 - MySQL 5.7
+
+# AI development
+You can let AI to generate games using **avg.NET**.
+1. Clone this repository.
+1. Let AI to learn about this framework by sharing the files.
+1. Share your favorite background images, person images, audio files...
+1. Let AI to generate original game.
+1. Play it, then feedback to AI what you notice (bugs, improvements...)
+
+AI also will help you to
+- learn about or improve **avg.NET**
+- deploy your game to environment
+- translate text
+
+And so on. So ask anything you want!
 
 # Folders
 ## Controllers
@@ -65,8 +88,16 @@ But If you have the database server separetely, you may need to execute script y
 the root folder of The static files.
 ### scenes
 The folder for HTML files for each scenes.  
-Each HTML files should have links to related image files in *img* folder.  
-And some HTML files may have links to related Javascript files in *scene-js* folder.
+Each HTML files should have links to 
+- JQuery
+- [avg.js](./wwwroot/avg.js)
+- [avg.css](./wwwroot/avg.css)
+- [bgm.js](./wwwroot/audio/bgm.js) (optional)
+- related scene image file in [img](./wwwroot/img) folder.
+- related audio file in [audio](./wwwroot/audio) folder (optional).
+Copy [00001.html](./wwwroot/scenes/00001.html) of the sample game and modify this will be fine.
+\
+And some HTML files may have links to related Javascript files in *scene-js* folder. (as [00002.html](./wwwroot/scenes/00002.html))
 ### img
 The folder for image files for each scenes.
 ### scene-js
@@ -81,7 +112,9 @@ Usually, you don't need to modify them. But feel free to do it if needed.
 ### avg.css
 CSS file of this framework.
 Usually, you don't need to modify them. But feel free to do it if needed.
-# Flag
+
+# Concepts
+## Flag
 Understanding the concept of **flag** is important for using this framework.  
 Flag is the value represents the player's state.  
 It is a 64 bit unsigned inetger, but used as a binary.
@@ -96,17 +129,17 @@ Example:
 
 The initial value of player's flag is 0.
 
-# Tables
+## Tables
 Understanding the concepts of each tables is also important for using this framework.  
-Definitions of each tables are discribed in *mysql-setting/initdb.d/init-avg-db.sql* as CREATE TABLE statements.  
+Definitions of each tables are discribed in [init-avg-db.sql](mysql-setting/initdb.d/init-avg-db.sql) as CREATE TABLE statements.  
 So, only summaries of each tables are described below.
 
-## SCENE
+### SCENE
 Scene is a set of id and path of the scene.  
 PATH column should have a relative path to its HTML file from *wwwroot*.  
 This table also have FLAG column, but it's not used now.
 
-## COMMAND
+### COMMAND
 Command is a thing the player can do at the scene.
 
 The records those have specific SCENE_ID are the things the player can do only at the scene.  
@@ -118,7 +151,7 @@ COMMNAD table has also the MODE column, can have values:
 - 1: Person Command (The command can be used only in Person Mode)
 - 2: Move Command (The command to go to other scenes)
 
-## TARGET
+### TARGET
 Target is a thing can be a target of the command the player selects.  
 When the player is in a room at a scene, and if the player selects the command 'check', the targets may be the stuff in the room. (ex. chair, table, bed ...)
 
@@ -135,15 +168,15 @@ If the FLAG of the record is NULL, then the target is always shown at the scene.
 The column DEST_SCENE_ID is only for targets that relates to the command that has MODE=1 (the command to go to another scene).  
 And it is the SCENE_ID the player go to.
 
-## MESSSAGE
+### MESSSAGE
 Message is a text shown to the player as the result of the command executed to the target or is a text that prompts the player to select a target of the command.
 
-### FLAG, SET_FLAG, UNSET_FLAG columns
+- FLAG, SET_FLAG, UNSET_FLAG columns
 The column FLAG is the condition whether the message is shown, same as the FLAG coulumn of the TARGET table discribed above.  
 The column SET_FLAG is the flag value added to the player's flag when the message is shown.  
 UNSET_FLAG is the opposite, the flag value subtracted from the player's flag when the message is shown.
 
-### Player's flag value before and after a message is shown
+- Player's flag value before and after a message is shown
 |                     | decimal  | binary |
 |:--------------------|---------:|-------:|
 | player's flag value (before the message is shown) | 20       |  10100 |
@@ -152,7 +185,7 @@ UNSET_FLAG is the opposite, the flag value subtracted from the player's flag whe
 | ---------------------- | -------- | ------ |
 | player's flag value (after the message is shown)  | **24**       |  11000 |
 
-### EVENT column
+- EVENT column
 The column EVENT is the name of Javascript function should be executed when the message is shown.  
 If the EVENT column has the value 'getCommands', and the message is shown, the function *getCommands()* needs to be resolved as a Javascript function.  
 So, the function need to be defined in the *avg.js* or in the scene specific .js file in the *scene-js* folder, as the child of the object *sceneEvents*.  
@@ -166,7 +199,7 @@ the messages and events are shown as the order:
 1. event 'func2' are executed
 1. text 'msg2' is shown
 
-### TEXT column
+- TEXT column
 The text content of the message.  
 
 TEXT has some control characters shown below.
@@ -195,7 +228,7 @@ Then, the associated event (defined in EVENT column) is executed, because the TE
 There are no escape sequences for these control characters. So you can't use them as a part of message content.  
 But still useful for showing the messages more readably.
 
-### Initial message of the scene
+## Initial message of the scene
 Initial message of the scene is the message shown when the player come to the scene.  
 And it is the record of the MESSSAGE table that has
 - SCENE_ID: id of the scene and
@@ -209,7 +242,7 @@ Initial messages have it's flag value. So, you can change initial message of the
 Usually, when the initial message of a scene is shown, It is need to show the top level commands.  
 So, **initial message records often have 'getCommands' as it's event**.  
 
-### Initial message of the command
+## Initial message of the command
 Initial message of the command is the message shown when the player select a command.  
 It is the message that prompts the player to select a target of the command to be executed to.  
 For example: '*Check what?*'. '*Go where?*'.  
@@ -218,7 +251,7 @@ And it is the record of 'message' table that has
 - COMMAND_ID: id of the command the player selected. and
 - TARGET_ID: '000'
 
-### Default message of the command
+## Default message of the command
 Default message of the command is the message shown when the command the player selected has no target.  
 It is the message that tells the player the command has no target here. (For example: '*There is nothing to check here.*')  
 And it is the record of `message` table that has
@@ -226,7 +259,7 @@ And it is the record of `message` table that has
 - COMMAND_ID: id of the command the player selected. and
 - TARGET_ID: '999'
 
-# Person Mode
+## Person Mode
 *Person mode* is also important feature of this framework.  
 If the player is with a person at a scene, the person's image should be shown overlaid on the background image of the scene.  
 And the player can select only *person commands*. (ex. show something to the person, talk about something with the person)  
@@ -245,7 +278,7 @@ The argument is empty string.
 
 See the *wwwroot/scene-js/00002.js* for example of setting and unsetting *person mode*.
 
-# Save/load
+## Save/load
 The events 'showSaveDialog', 'showLoadDialog' are defined in *avg.js*.
 When they executed as the message event, save/load dialog box is shown.
 Then player can save current flag value and scene, of load them.
