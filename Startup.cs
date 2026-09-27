@@ -27,6 +27,7 @@ public class Startup
         }
 
         app.UseHttpsRedirection();
+        app.UseDefaultFiles();  // serve wwwroot/index.html (title page) at /
         app.UseStaticFiles();
         app.UseRouting();
 
