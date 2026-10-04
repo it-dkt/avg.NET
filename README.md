@@ -1,6 +1,9 @@
 # Latest Version
-The latest version is 2.6.
+The latest version is 2.7.
 
+- 2.7
+  - title page (*wwwroot/index.html*) shown at `/`
+  - updated sample game
 - 2.6
   - background music
   - scroll in command area
@@ -22,6 +25,8 @@ You can create your own game just by preparing
 - some database records
 - HTML files and image files for each scene in your game
 - some JavaScript functions for special events (only if needed)
+
+> **More games made with avg.NET are published at [it-dkt.github.io](https://it-dkt.github.io/).**
 
 # Getting started
 First, clone this repository.  
