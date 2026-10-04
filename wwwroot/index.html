@@ -2,11 +2,11 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,user-scalable=0">
 	<script src="/audio/bgm.js"></script>
-	<title>八束村奇譚</title>
+	<title>A Tale of Yatsuka Village</title>
 	<link rel="stylesheet" type="text/css" href="/avg.css">
 	<style>
 		.mincho {
-			font-family: "Yu Mincho", "YuMincho", "游明朝", "Hiragino Mincho ProN", "MS Mincho", serif;
+			font-family: Georgia, "Times New Roman", "Yu Mincho", "YuMincho", "游明朝", "Hiragino Mincho ProN", "MS Mincho", serif;
 		}
 		#title-area {
 			position: relative;
@@ -25,7 +25,6 @@
 		#title-text {
 			position: absolute;
 			top: 14px; left: 22px;
-			writing-mode: vertical-rl;
 			font-size: 26px;
 			letter-spacing: 0.15em;
 			white-space: nowrap;
@@ -36,10 +35,9 @@
 		}
 		#title-sub {
 			position: absolute;
-			top: 18px; left: 62px;
-			writing-mode: vertical-rl;
-			font-size: 10px;
-			letter-spacing: 0.4em;
+			top: 52px; left: 24px;
+			font-size: 11px;
+			letter-spacing: 0.15em;
 			color: #b8a8a0;
 			opacity: 0;
 			animation: fadein 3s 2s forwards;
@@ -87,12 +85,12 @@
 		<div id="title-area">
 			<img src="/img/title.jpg" alt="">
 			<div id="title-text" class="mincho">八束村奇譚</div>
-			<div id="title-sub" class="mincho">やつかむら　きたん</div>
+			<div id="title-sub" class="mincho">A Tale of Yatsuka Village</div>
 		</div>
 		<div id="menu">
 			<ul>
-				<li id="menu-start" class="mincho">はじめから</li>
-				<li id="menu-continue" class="mincho">つづきから</li>
+				<li id="menu-start" class="mincho">New Game</li>
+				<li id="menu-continue" class="mincho">Continue</li>
 			</ul>
 		</div>
 	</div>
@@ -130,7 +128,7 @@
 
 			const dialog = document.createElement('div');
 			dialog.id = 'avg-save-dialog';
-			dialog.innerHTML = '<h2>📂 ロード</h2>';
+			dialog.innerHTML = '<h2>📂 Load</h2>';
 
 			for (let slot = 1; slot <= SLOT_COUNT; slot++) {
 				const data = loadSlot(slot);
@@ -140,12 +138,12 @@
 
 				const info = document.createElement('div');
 				info.className = 'avg-save-slot-info';
-				info.innerHTML = `<span><strong>スロット ${slot}</strong></span>`
-					+ `<span>${data ? fmtDate(data.savedAt) : '空き'}</span>`;
+				info.innerHTML = `<span><strong>Slot ${slot}</strong></span>`
+					+ `<span>${data ? fmtDate(data.savedAt) : 'Empty'}</span>`;
 
 				const btn = document.createElement('button');
 				btn.className = 'avg-save-slot-btn do-load';
-				btn.textContent = 'ロード';
+				btn.textContent = 'Load';
 				btn.disabled = !data;
 				btn.addEventListener('click', () => {
 					sessionStorage[FLAG_KEY] = data.flag;
@@ -159,7 +157,7 @@
 
 			const closeBtn = document.createElement('button');
 			closeBtn.id = 'avg-save-close';
-			closeBtn.textContent = 'キャンセル';
+			closeBtn.textContent = 'Cancel';
 			closeBtn.addEventListener('click', closeDialog);
 			dialog.appendChild(closeBtn);
 
