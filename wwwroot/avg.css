@@ -112,6 +112,10 @@ body {
 .avg-save-slot-btn.do-load[disabled] {
 	background: #444; color: #888; cursor: default; opacity: 1;
 }
+.avg-save-slot-btn.do-speed { background: #5555cc; color: #fff; }
+.avg-save-slot-btn.do-speed[disabled] {
+	background: transparent; color: #aaaaff; cursor: default; opacity: 1;
+}
 #avg-save-close {
 	margin-top: 16px; width: 100%;
 	padding: 8px; border: 1px solid #4a4a8a; border-radius: 4px;

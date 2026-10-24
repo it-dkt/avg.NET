@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using avg.NET.Controllers;
 
 namespace avg.NET.Tests;
@@ -74,6 +75,26 @@ public class CommandApiTests
         var swamp = Assert.Single(response!.Commands, c => c.TargetId == "006");
         Assert.Equal(1, swamp.Forbidden);
         Assert.All(response.Commands.Where(c => c.TargetId != "006"), c => Assert.Equal(0, c.Forbidden));
+    }
+
+    [Fact]
+    public async Task SystemCommandTargets()
+    {
+        var response = await _client.GetFromJsonAsync<TargetResponse>("/api/target?sceneId=00001&commandId=CNF&flag=0");
+
+        // load, save, text speed, back to title (in TARGET_ID order)
+        Assert.Equal(new[] { "LOA", "SAV", "SPD", "TTL" }, response!.Commands.Select(c => c.TargetId));
+    }
+
+    [Theory]
+    [InlineData("SAV", "showSaveDialog")]
+    [InlineData("LOA", "showLoadDialog")]
+    [InlineData("SPD", "showSpeedDialog")]
+    public async Task SystemCommandEvents(string targetId, string expected)
+    {
+        var message = await _client.GetFromJsonAsync<JsonElement>($"/api/message?sceneId=00001&commandId=CNF&targetId={targetId}&flag=0");
+
+        Assert.Equal(expected, message.GetProperty("event").GetString());
     }
 
     [Fact]

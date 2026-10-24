@@ -121,6 +121,7 @@ VALUES
 ('00000','MOV','999',0,0,0,NULL,'There is nowhere to go.'),
 ('00000','CNF','SAV',0,0,0,'showSaveDialog','^'),
 ('00000','CNF','LOA',0,0,0,'showLoadDialog','^'),
+('00000','CNF','SPD',0,0,0,'showSpeedDialog','^'),
 ('00000','CNF','TTL',0,0,0,'backToTitle','Returning to the title screen.@(Any unsaved progress will be lost.);^'),
 ('00000','TLK','Z99',0,0,0,'hidePerson','You end the conversation.^'),
 -- common: items
@@ -302,6 +303,7 @@ VALUES
 ('00000','TLK','Z99',0,0,'End conversation',NULL),
 ('00000','CNF','SAV',1,0,'Save',NULL),
 ('00000','CNF','LOA',1,0,'Load',NULL),
+('00000','CNF','SPD',1,0,'Text speed',NULL),
 ('00000','CNF','TTL',1,0,'Back to title',NULL),
 -- 00001 Village entrance
 ('00001','CHK','001',0,0,'Stone monument',NULL),

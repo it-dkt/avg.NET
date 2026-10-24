@@ -329,5 +329,15 @@ Then the player can save the current flag value and scene, or load them.
 
 Player data is saved in the browser's local storage.
 
+## Text speed
+The player can click the message area to show the rest of the message part at once, or to go to the next part (the same as ▼).
+
+The event 'showSpeedDialog' is defined in *avg.js*.  
+When it is executed as a message event, the text speed dialog box is shown.  
+Then the player can select the text speed: Slow, Normal, Fast or Instant (the whole message part is shown at once).
+
+The text speed is saved in the browser's local storage, separately from the save data.  
+In the sample game, the 'System' command has the target 'Text speed' for this event.
+
 # data-sheet.xlsx
 data-sheet.xlsx will help you write INSERT statements for each table.

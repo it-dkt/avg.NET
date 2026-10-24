@@ -307,8 +307,11 @@ const showMessagePart = function (part_index, eventIndex = 0) {
 	let eventCount = 0;
 
 	const partId = ++messagePartId;
+	// wait time per charactor, set by the player (see 'code for text speed' below)
+	const waitTime = getTextSpeed().wait;
 	isTyping = true;
-	skipTyping = false;
+	// no wait: show the whole part at once
+	skipTyping = (waitTime == 0);
 
 	// show charactors one by one
 	const write_text = function () {
@@ -340,7 +343,7 @@ const showMessagePart = function (part_index, eventIndex = 0) {
 
 		if (messagePart.length > index) {
 			// show next charactor
-			typingTimer = setTimeout(write_text, MESSAGE_WAIT_TIME);
+			typingTimer = setTimeout(write_text, waitTime);
 		} else {
 			isTyping = false;
 
@@ -372,7 +375,7 @@ const showMessagePart = function (part_index, eventIndex = 0) {
 	}
 
 	typeNext = write_text;
-	typingTimer = setTimeout(write_text, MESSAGE_WAIT_TIME);
+	typingTimer = setTimeout(write_text, waitTime);
 }
 
 const setPersonMode = function (person_flag) {
@@ -434,6 +437,10 @@ const sceneEvents = {
 	showLoadDialog: function(){
 
 		showLoadDialog();
+	},
+	showSpeedDialog: function(){
+
+		showSpeedDialog();
 	}
 };
 
@@ -582,6 +589,72 @@ window.showLoadDialog = function () {
 
 			// old save data has no path
 			window.location.href = data.path ?? `/scenes/${data.sceneId}.html`;
+		});
+
+		row.appendChild(info);
+		row.appendChild(btn);
+		dialog.appendChild(row);
+	});
+
+	const closeBtn = document.createElement('button');
+	closeBtn.id = 'avg-save-close';
+	closeBtn.textContent = 'Cancel';
+	closeBtn.addEventListener('click', () => document.getElementById('avg-save-overlay')?.remove());
+	dialog.appendChild(closeBtn);
+};
+
+/* --------------------------------------------------
+* code for text speed below
+* -------------------------------------------------- */
+
+const TEXT_SPEED_KEY = 'avg_text_speed';
+// wait: wait time per charactor (msec). 0 shows the whole message part at once.
+const TEXT_SPEEDS = [
+	{ name: 'slow', label: 'Slow', wait: 150 },
+	{ name: 'normal', label: 'Normal', wait: MESSAGE_WAIT_TIME },
+	{ name: 'fast', label: 'Fast', wait: 30 },
+	{ name: 'instant', label: 'Instant', wait: 0 }
+];
+const DEFAULT_TEXT_SPEED = 'normal';
+
+// text speed is kept in the local storage, separately from the save data
+function getTextSpeed() {
+	const name = localStorage.getItem(TEXT_SPEED_KEY);
+	return TEXT_SPEEDS.find(s => s.name == name)
+		?? TEXT_SPEEDS.find(s => s.name == DEFAULT_TEXT_SPEED);
+}
+
+function setTextSpeed(name) {
+	localStorage.setItem(TEXT_SPEED_KEY, name);
+}
+
+// text speed dialog (same look as the save/load dialog)
+window.showSpeedDialog = function () {
+	document.getElementById('avg-save-overlay')?.remove();
+
+	const dialog = buildOverlay();
+	dialog.innerHTML = '<h2>⏩ Text speed</h2>';
+
+	const current = getTextSpeed();
+
+	TEXT_SPEEDS.forEach(s => {
+		const isCurrent = (s.name == current.name);
+		const row = document.createElement('div');
+		row.className = 'avg-save-slot';
+
+		const info = document.createElement('div');
+		info.className = 'avg-save-slot-info';
+		info.innerHTML = `<span><strong>${s.label}</strong></span>`;
+
+		const btn = document.createElement('button');
+		btn.className = 'avg-save-slot-btn do-speed';
+		btn.textContent = isCurrent ? '✓ Selected' : 'Select';
+		if (isCurrent) btn.disabled = true;
+
+		btn.addEventListener('click', () => {
+			setTextSpeed(s.name);
+			toast(`Text speed: ${s.label}`);
+			document.getElementById('avg-save-overlay')?.remove();
 		});
 
 		row.appendChild(info);
