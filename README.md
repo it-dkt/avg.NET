@@ -56,7 +56,7 @@ So after editing *init-avg-db.sql*, remove the containers and the database volum
 # Development
 You can develop your own game using *docker compose* as described above.  
 But you can also debug the game as an ordinary ASP.NET web application, using the .NET SDK with [Visual Studio](https://visualstudio.microsoft.com/) or [Visual Studio Code](https://code.visualstudio.com/).  
-In that case, you need a MySQL 5.7 database server (running locally or in a Docker container).
+In that case, you need a MySQL 8.4 database server (running locally or in a Docker container).
 
 ## If you run the database server separately (not using *docker compose*)
 
@@ -68,8 +68,13 @@ In that case, you need a MySQL 5.7 database server (running locally or in a Dock
 Open [docker-compose.yaml](./docker-compose.yaml) and uncomment the `ports` setting of `avg_db_server`. Then you can connect to the MySQL server using a MySQL client.
 
 ## Environment
-- .NET 6.0 SDK
-- MySQL 5.7
+- .NET 10.0 SDK
+- MySQL 8.4
+
+In the Docker image, the app runs as a non-root user and listens on port 8080. *docker-compose.yaml* maps it to port 80 of your PC.
+
+> If you used an older version with MySQL 5.7, the existing database volume can't be used by MySQL 8.4.  
+> Run `docker compose -f "docker-compose.yaml" down -v` once before starting this version.
 
 # AI development
 You can use AI to create games with **avg.NET**, and we strongly recommend it.  

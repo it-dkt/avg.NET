@@ -1,15 +1,21 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
-WORKDIR /home/app
+WORKDIR /src
 
-COPY . .
-
+# restore first, so the packages are cached until the project file changes
+COPY avg.NET.csproj .
 RUN dotnet restore
 
-RUN dotnet publish ./avg.NET.csproj -o /publish/
+COPY . .
+RUN dotnet publish ./avg.NET.csproj -c Release --no-restore -o /publish/
 
-WORKDIR /publish
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 
-#ENV ASPNETCORE_URLS=http://+:8080
+WORKDIR /app
+COPY --from=build /publish .
+
+# run as the non-root user of the image. listens on port 8080 (ASPNETCORE_HTTP_PORTS)
+USER app
+EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "avg.NET.dll"]
