@@ -3,6 +3,7 @@ The latest version is 3.0.
 
 - 3.0
   - .NET 10, MySQL 8.4 and jQuery 4.0
+  - game screen scaled to fit the window, and centered
   - click the message area to skip typing or go to the next part
   - text speed setting
   - cancel target for commands (only by adding records)
