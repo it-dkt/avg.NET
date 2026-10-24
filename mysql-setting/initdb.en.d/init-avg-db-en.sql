@@ -119,6 +119,7 @@ VALUES
 ('00000','TLK','999',0,0,0,NULL,'There is no one to talk to.'),
 ('00000','SHW','999',0,0,0,NULL,'You have nothing to show.'),
 ('00000','MOV','999',0,0,0,NULL,'There is nowhere to go.'),
+('00000','MOV','CXL',0,0,0,NULL,'Never mind.'),
 ('00000','CNF','SAV',0,0,0,'showSaveDialog','^'),
 ('00000','CNF','LOA',0,0,0,'showLoadDialog','^'),
 ('00000','CNF','SPD',0,0,0,'showSpeedDialog','^'),
@@ -309,6 +310,7 @@ VALUES
 ('00001','CHK','001',0,0,'Stone monument',NULL),
 ('00001','CHK','002',0,0,'Bus stop',NULL),
 ('00001','MOV','001',0,0,'Into the village','00003'),
+('00001','MOV','CXL',1,0,'Cancel',NULL),
 -- 00002 Inn, guest room
 ('00002','CHK','001',0,0,'Closet',NULL),
 ('00002','CHK','002',0,0,'Window',NULL),
@@ -318,6 +320,7 @@ VALUES
 ('00002','TLK','002',0,0,'Yatsuka Festival',NULL),
 ('00002','TLK','003',0,2,'Sayo',NULL),
 ('00002','MOV','001',0,0,'Crossroads','00003'),
+('00002','MOV','CXL',1,0,'Cancel',NULL),
 -- 00003 Village crossroads
 ('00003','CHK','001',0,0,'Houses',NULL),
 ('00003','CHK','002',0,0,'Notice',NULL),
@@ -328,6 +331,7 @@ VALUES
 ('00003','MOV','004',0,0,'Yatsuka Shrine','00006'),
 ('00003','MOV','005',0,8,'Sayo''s house','00008'),
 ('00003','MOV','006',1,1024,'Swamp',NULL),
+('00003','MOV','CXL',1,0,'Cancel',NULL),
 -- 00004 Village head's house
 ('00004','CHK','001',0,0,'Gate',NULL),
 ('00004','CHK','002',0,0,'Wall',NULL),
@@ -336,11 +340,13 @@ VALUES
 ('00004','TLK','003',0,2,'Sayo',NULL),
 ('00004','MOV','001',0,0,'Crossroads','00003'),
 ('00004','MOV','002',0,8192,'Storehouse','00005'),
+('00004','MOV','CXL',1,0,'Cancel',NULL),
 -- 00005 Old storehouse
 ('00005','CHK','001',0,0,'Wooden chest',NULL),
 ('00005','CHK','002',0,0,'Shelves',NULL),
 ('00005','CHK','003',0,0,'White robe',NULL),
 ('00005','MOV','001',0,0,'Front of the house','00004'),
+('00005','MOV','CXL',1,0,'Cancel',NULL),
 -- 00006 Yatsuka Shrine grounds
 ('00006','CHK','001',0,0,'Bundles of hair',NULL),
 ('00006','CHK','002',0,0,'Main Hall',NULL),
@@ -350,12 +356,14 @@ VALUES
 ('00006','TLK','003',0,2,'Sayo',NULL),
 ('00006','MOV','001',0,0,'Crossroads','00003'),
 ('00006','MOV','002',0,1536,'Main Hall','00007'),
+('00006','MOV','CXL',1,0,'Cancel',NULL),
 -- 00007 Main Hall
 ('00007','CHK','001',0,0,'Altar',NULL),
 ('00007','CHK','002',0,0,'Goddess statue',NULL),
 ('00007','CHK','003',0,0,'Scroll',NULL),
 ('00007','MOV','001',0,0,'Shrine grounds','00006'),
 ('00007','MOV','002',0,2048,'Underground','00010'),
+('00007','MOV','CXL',1,0,'Cancel',NULL),
 -- 00008 Sayo's house
 ('00008','CHK','001',0,0,'Family altar',NULL),
 ('00008','CHK','002',0,0,'Dresser',NULL),
@@ -363,6 +371,7 @@ VALUES
 ('00008','TLK','001',0,0,'Misa',NULL),
 ('00008','TLK','002',0,0,'Village head',NULL),
 ('00008','MOV','001',0,0,'Crossroads','00003'),
+('00008','MOV','CXL',1,0,'Cancel',NULL),
 -- 00009 Swamp shore
 ('00009','TLK','001',0,0,'Misa',NULL),
 ('00009','TLK','002',0,0,'Genzo',NULL),
@@ -372,4 +381,5 @@ VALUES
 ('00010','CHK','002',0,0,'Tunnel',NULL),
 ('00010','CHK','003',0,0,'Wall',NULL),
 ('00010','MOV','001',0,0,'Main Hall','00007'),
-('00010','MOV','002',0,4096,'End of the tunnel','00009');
+('00010','MOV','002',0,4096,'End of the tunnel','00009'),
+('00010','MOV','CXL',1,0,'Cancel',NULL);

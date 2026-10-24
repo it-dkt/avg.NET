@@ -41,10 +41,43 @@ public class CommandApiTests
         var response = await _client.GetFromJsonAsync<TargetResponse>("/api/target?sceneId=00001&commandId=MOV&flag=0");
 
         Assert.Equal("どこへ行く？", response!.Message);
-        var target = Assert.Single(response.Commands);
-        Assert.Equal("001", target.TargetId);
+        Assert.Equal(new[] { "001", "CXL" }, response.Commands.Select(c => c.TargetId));
+        var target = response.Commands[0];
         Assert.Equal("村の中へ", target.Text);
         Assert.Equal(2, target.Mode);
+    }
+
+    [Fact]
+    public async Task CancelTargetIsShownLast()
+    {
+        var response = await _client.GetFromJsonAsync<TargetResponse>("/api/target?sceneId=00003&commandId=MOV&flag=0");
+
+        // forbidden, so the player doesn't move
+        var cancel = response!.Commands.Last();
+        Assert.Equal("CXL", cancel.TargetId);
+        Assert.Equal("やめる", cancel.Text);
+        Assert.Equal(1, cancel.Forbidden);
+    }
+
+    [Fact]
+    public async Task CancelTargetMessage()
+    {
+        var message = await _client.GetFromJsonAsync<JsonElement>("/api/message?sceneId=00003&commandId=MOV&targetId=CXL&flag=8");
+
+        Assert.Equal("やめた。", message.GetProperty("message").GetString());
+        Assert.Equal(JsonValueKind.Null, message.GetProperty("event").ValueKind);
+        // the flag is not changed
+        Assert.Equal("8", message.GetProperty("flag").GetString());
+    }
+
+    [Fact]
+    public async Task NoCancelTargetInSceneWithoutDestination()
+    {
+        // the cancel target is added to each scene, so the default message is shown in a scene without destination
+        var response = await _client.GetFromJsonAsync<TargetResponse>("/api/target?sceneId=00009&commandId=MOV&flag=0");
+
+        Assert.Equal("どこにも行けない。", response!.Message);
+        Assert.Empty(response.Commands);
     }
 
     [Fact]
@@ -57,9 +90,9 @@ public class CommandApiTests
     }
 
     [Theory]
-    [InlineData("0", new[] { "001", "002", "003", "004" })]
-    [InlineData("8", new[] { "001", "002", "003", "004", "005" })]  // FLAG = 8 of '小夜の家'
-    [InlineData("1032", new[] { "001", "002", "003", "004", "005", "006" })]    // 1024 | 8
+    [InlineData("0", new[] { "001", "002", "003", "004", "CXL" })]
+    [InlineData("8", new[] { "001", "002", "003", "004", "005", "CXL" })]  // FLAG = 8 of '小夜の家'
+    [InlineData("1032", new[] { "001", "002", "003", "004", "005", "006", "CXL" })]    // 1024 | 8
     public async Task TargetsAreFilteredByFlag(string flag, string[] expected)
     {
         var response = await _client.GetFromJsonAsync<TargetResponse>($"/api/target?sceneId=00003&commandId=MOV&flag={flag}");
@@ -74,7 +107,8 @@ public class CommandApiTests
 
         var swamp = Assert.Single(response!.Commands, c => c.TargetId == "006");
         Assert.Equal(1, swamp.Forbidden);
-        Assert.All(response.Commands.Where(c => c.TargetId != "006"), c => Assert.Equal(0, c.Forbidden));
+        // destinations other than '沼' are not forbidden ('CXL' is the cancel target)
+        Assert.All(response.Commands.Where(c => c.TargetId != "006" && c.TargetId != "CXL"), c => Assert.Equal(0, c.Forbidden));
     }
 
     [Fact]

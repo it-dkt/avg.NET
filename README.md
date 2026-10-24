@@ -303,6 +303,24 @@ It is the record of the MESSAGE table that has
 - COMMAND_ID: ID of the command the player selected and
 - TARGET_ID: '999'
 
+## Cancel the command
+You can add a target to cancel the command (for example: '*Cancel*' for the command '*Go*'), just by adding records.  
+When the player selects it, its message is shown and the top-level commands are shown again, as with any other target.
+
+Add a TARGET record for each scene that has targets of the command, and one common MESSAGE record:
+```sql
+-- TARGET: FORBIDDEN = 1, so the player doesn't move even if it is a target of a move command
+('00001','MOV','CXL',1,0,'Cancel',NULL),
+('00003','MOV','CXL',1,0,'Cancel',NULL),
+-- MESSAGE: common for all scenes
+('00000','MOV','CXL',0,0,0,NULL,'Never mind.'),
+```
+- Only the commands that have these records can be canceled. (In the sample game, only the 'Go' command can be canceled.)
+- Targets are sorted by TARGET_ID, and letters come after numbers. So a TARGET_ID like 'CXL' is shown last.
+- You can also add only one common TARGET record (SCENE_ID = '00000') instead of the records for each scene.  
+  But then the cancel target is shown even in a scene where the command has no other targets,
+  and the default message of the command (TARGET_ID = '999') is not shown there.
+
 ## Person Mode
 *Person mode* is also an important feature of this framework.  
 If the player is with a person at a scene, the person's image should be shown over the background image of the scene.  
