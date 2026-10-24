@@ -15,10 +15,33 @@ let splitMsgs = [];
 let eventString = DEFAULT_EVENT_STRING;
 let personMode = ''; 
 let isOk = true;
+// incremented each time a message part starts, to stop showing the previous part
+let messagePartId = 0;
+// true while a message part is being shown character by character
+let isTyping = false;
+// set by clicking the message area, to show the rest of the message part at once
+let skipTyping = false;
+// timer and function to show the next charactor, to skip typing immediately
+let typingTimer = null;
+let typeNext = null;
 
 $(document).ready(function () {
+	$('#message-area').on('click', onClickMessageArea);
 	initScene();
 });
+
+// click on the message area: skip typing, or go to the next message part
+const onClickMessageArea = function () {
+	if (isTyping) {
+		// show the rest now, without waiting for the timer
+		skipTyping = true;
+		clearTimeout(typingTimer);
+		typeNext();
+		return;
+	}
+
+	$(this).find('a.message-next').trigger('click');
+}
 
 const initScene = function () {
 
@@ -283,35 +306,53 @@ const showMessagePart = function (part_index, eventIndex = 0) {
 	let index = 0;
 	let eventCount = 0;
 
+	const partId = ++messagePartId;
+	isTyping = true;
+	skipTyping = false;
+
 	// show charactors one by one
 	const write_text = function () {
-		// if matches defined controll charactors
-		if (messagePart[index] == MESSAGE_NEWLINE_CHAR) {
-			// new line
-			$(div_selector).append('<br/>');
-		} else if (messagePart[index] == MESSAGE_EVENT_CHAR) {
-			// execute event
-			//console.log(`# index=${index} executing eventIndex=${eventIndex + eventCount}`);
-			execEvent(eventIndex + eventCount);
-			eventCount++;
-		} else if (index < messagePart.length) {
-			// normal charactors (appended as text, so '<' or '&' is shown as it is)
-			$(div_selector).append(document.createTextNode(messagePart[index]));
-			//console.log(index + ' : ' + messagePart[index]);
-		}
+		// another message part has started
+		if (partId != messagePartId) return;
 
-		index++;
+		// when skipped, show the rest of the part at once (events are executed in order)
+		do {
+			// if matches defined controll charactors
+			if (messagePart[index] == MESSAGE_NEWLINE_CHAR) {
+				// new line
+				$(div_selector).append('<br/>');
+			} else if (messagePart[index] == MESSAGE_EVENT_CHAR) {
+				// execute event
+				//console.log(`# index=${index} executing eventIndex=${eventIndex + eventCount}`);
+				execEvent(eventIndex + eventCount);
+				eventCount++;
+			} else if (index < messagePart.length) {
+				// normal charactors (appended as text, so '<' or '&' is shown as it is)
+				$(div_selector).append(document.createTextNode(messagePart[index]));
+				//console.log(index + ' : ' + messagePart[index]);
+			}
+
+			index++;
+		} while (skipTyping && messagePart.length > index && partId == messagePartId);
+
+		// an event may have started another message part
+		if (partId != messagePartId) return;
+
 		if (messagePart.length > index) {
 			// show next charactor
-			setTimeout(write_text, MESSAGE_WAIT_TIME);
+			typingTimer = setTimeout(write_text, MESSAGE_WAIT_TIME);
 		} else {
+			isTyping = false;
+
 			// the end of the message part
 			if (splitMsgs.length > (part_index + 1)) {
 				// create link to next part
-				const next_link = $('<a></a>');
+				const next_link = $('<a></a>', { class: 'message-next' });
 				next_link.attr('href', 'javascript:void(0);');
 				next_link.text(MESSAGE_NEXT_LINK);
-				next_link.on('click', function () {
+				next_link.on('click', function (e) {
+					// don't let the message area skip the next part by this click
+					e.stopPropagation();
 					showMessagePart(part_index + 1, eventIndex + eventCount);
 				});
 
@@ -330,7 +371,8 @@ const showMessagePart = function (part_index, eventIndex = 0) {
 		}
 	}
 
-	setTimeout(write_text, MESSAGE_WAIT_TIME);
+	typeNext = write_text;
+	typingTimer = setTimeout(write_text, MESSAGE_WAIT_TIME);
 }
 
 const setPersonMode = function (person_flag) {

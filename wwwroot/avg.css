@@ -60,6 +60,8 @@ body {
 	clear: both;
 	width: 518px;
 	height: 80px;
+	/* click to skip typing or go to the next part */
+	cursor: pointer;
 }
 
 #command-list li {
