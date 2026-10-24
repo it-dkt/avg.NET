@@ -76,6 +76,13 @@ In the Docker image, the app runs as a non-root user and listens on port 8080. *
 > If you used an older version with MySQL 5.7, the existing database volume can't be used by MySQL 8.4.  
 > Run `docker compose -f "docker-compose.yaml" down -v` once before starting this version.
 
+## Tests
+The API tests are in *tests/avg.NET.Tests*. Run them at the repository root:  
+`dotnet test tests/avg.NET.Tests`
+
+The tests start a MySQL 8.4 container loaded with *mysql-setting/initdb.d/init-avg-db.sql* (using [Testcontainers](https://dotnet.testcontainers.org/)), so Docker needs to be running.  
+They check the sample game data, so update the tests if you change the data.
+
 # AI development
 You can use AI to create games with **avg.NET**, and we strongly recommend it.  
 A game in **avg.NET** is made of plain text files: SQL, HTML and JavaScript. AI is good at reading and writing these.  
