@@ -1,6 +1,13 @@
 # Latest Version
-The latest version is 2.7.
+The latest version is 3.0.
 
+- 3.0
+  - .NET 10, MySQL 8.4 and jQuery 4.0
+  - click the message area to skip typing or go to the next part
+  - text speed setting
+  - cancel target for commands (only by adding records)
+  - API tests
+  - bug fixes (e.g. flag values above 2^53, a flag value of 0 not saved)
 - 2.7
   - title page (*wwwroot/index.html*) shown at `/`
   - updated sample game
@@ -14,6 +21,9 @@ The latest version is 2.7.
   - changed table schema
 
 Versions 2.0 and later are not compatible with 1.0.
+
+Game data (SQL, HTML and JavaScript files) and save data of 2.x can be used in 3.0 as they are.  
+But the database volume of MySQL 5.7 can't be used by MySQL 8.4, so run `docker compose down -v` once (see 'Environment' below).
 
 # Overview
 **avg.NET** is a framework for creating a **command-selection style adventure game** using
