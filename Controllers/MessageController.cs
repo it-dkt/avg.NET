@@ -33,35 +33,11 @@ public class MessageController : ControllerBase
     [HttpGet]
     public async Task<MessageResponse> Get([FromQuery] MessageRequest request)
     {
-        _connection.Open();
-
-        using var cmd = _connection.CreateCommand();
-        cmd.CommandText = SQL;
-        
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@sceneId",
-            DbType = DbType.String,
-            Value = request.SceneId,
-        });
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@commandId",
-            DbType = DbType.String,
-            Value = request.CommandId,
-        });
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@targetId",
-            DbType = DbType.String,
-            Value = request.TargetId,
-        });
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@flag",
-            DbType = DbType.UInt64,
-            Value = request.Flag,
-        });
+        using var cmd = await _connection.CreateCommandAsync(SQL);
+        cmd.Parameters.AddWithValue("@sceneId", request.SceneId);
+        cmd.Parameters.AddWithValue("@commandId", request.CommandId);
+        cmd.Parameters.AddWithValue("@targetId", request.TargetId);
+        cmd.Parameters.AddWithValue("@flag", request.Flag);
 
         using var reader = await cmd.ExecuteReaderAsync();
 

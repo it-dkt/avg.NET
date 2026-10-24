@@ -37,51 +37,23 @@ public class CommandController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<CommandResponse> Get([FromQuery] CommandRequest request)
+    public Task<CommandResponse> Get([FromQuery] CommandRequest request)
     {
-        _connection.Open();
-
-        using var cmd = _connection.CreateCommand();
-        cmd.CommandText = COMMANDS_SQL;
-        
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@sceneId",
-            DbType = DbType.String,
-            Value = request.SceneId,
-        });
-
-        var command = new CommandResponse();
-
-        using(var reader = await cmd.ExecuteReaderAsync()){
-            while(await reader.ReadAsync()){
-                command.Commands.Add(new ViewCommandModel{
-                    CommandId = reader.GetString("COMMAND_ID"),
-                    Text =  reader.GetString("TEXT"),
-                    Mode = reader.GetInt32("MODE")
-                });
-            }
-        }
-
-        return command;
+        return GetCommands(COMMANDS_SQL, request.SceneId);
     }
 
     // get person mode commands
     [HttpGet]
     [Route("person")]
-    public async Task<CommandResponse> GetPerson([FromQuery] CommandRequest request)
+    public Task<CommandResponse> GetPerson([FromQuery] CommandRequest request)
     {
-        _connection.Open();
+        return GetCommands(PERSON_COMMAND_SQL, request.SceneId);
+    }
 
-        using var cmd = _connection.CreateCommand();
-        cmd.CommandText = PERSON_COMMAND_SQL;
-        
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@sceneId",
-            DbType = DbType.String,
-            Value = request.SceneId,
-        });
+    private async Task<CommandResponse> GetCommands(string sql, string sceneId)
+    {
+        using var cmd = await _connection.CreateCommandAsync(sql);
+        cmd.Parameters.AddWithValue("@sceneId", sceneId);
 
         var command = new CommandResponse();
 

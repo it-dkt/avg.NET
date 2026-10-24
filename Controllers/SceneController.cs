@@ -32,30 +32,11 @@ public class SceneController : ControllerBase
     [Route("dest")]
     public async Task<SceneResponse> GetDestScene([FromQuery] SceneRequest request)
     {
-        _connection.Open();
+        using var cmd = await _connection.CreateCommandAsync(SQL);
+        cmd.Parameters.AddWithValue("@sceneId", request.SceneId);
+        cmd.Parameters.AddWithValue("@commandId", request.CommandId);
+        cmd.Parameters.AddWithValue("@targetId", request.TargetId);
 
-        using var cmd = _connection.CreateCommand();
-        cmd.CommandText = SQL;
-        
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@sceneId",
-            DbType = DbType.String,
-            Value = request.SceneId,
-        });
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@commandId",
-            DbType = DbType.String,
-            Value = request.CommandId,
-        });
-        cmd.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@targetId",
-            DbType = DbType.String,
-            Value = request.TargetId,
-        });
-        
         var scene = new SceneResponse();
 
         using(var reader = await cmd.ExecuteReaderAsync()){

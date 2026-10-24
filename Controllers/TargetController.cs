@@ -57,32 +57,13 @@ public class TargetController : ControllerBase
     [HttpGet]
     public async Task<TargetResponse> Get([FromQuery] TargetRequest request)
     {
-        _connection.Open();
-
         //
         // get targets of the command
         //
-        using var targetQuery = _connection.CreateCommand();
-        targetQuery.CommandText = GET_TARGET_SQL;
-        
-        targetQuery.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@sceneId",
-            DbType = DbType.String,
-            Value = request.SceneId,
-        });
-        targetQuery.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@commandId",
-            DbType = DbType.String,
-            Value = request.CommandId,
-        });
-        targetQuery.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@flag",
-            DbType = DbType.UInt64,
-            Value = request.Flag,
-        });
+        using var targetQuery = await _connection.CreateCommandAsync(GET_TARGET_SQL);
+        targetQuery.Parameters.AddWithValue("@sceneId", request.SceneId);
+        targetQuery.Parameters.AddWithValue("@commandId", request.CommandId);
+        targetQuery.Parameters.AddWithValue("@flag", request.Flag);
 
         var target = new TargetResponse();
         target.Message = "ERROR: No message!";
@@ -105,21 +86,10 @@ public class TargetController : ControllerBase
         //
         // get initial or default messsge of the command
         //
-        using var initalMessageQuery = _connection.CreateCommand();
-        if(hasRows){
-            // if the command has any target
-            initalMessageQuery.CommandText = GET_COMMAND_INITIAL_MESSAGE_SQL;
-        }else{
-            // if the command doesn't have any target
-            initalMessageQuery.CommandText = GET_COMMAND_DEFAULT_MESSAGE_SQL;
-        }
-
-        initalMessageQuery.Parameters.Add(new MySqlParameter
-        {
-            ParameterName = "@commandId",
-            DbType = DbType.String,
-            Value = request.CommandId,
-        });
+        // initial message if the command has any target, otherwise default message
+        var messageSql = hasRows ? GET_COMMAND_INITIAL_MESSAGE_SQL : GET_COMMAND_DEFAULT_MESSAGE_SQL;
+        using var initalMessageQuery = await _connection.CreateCommandAsync(messageSql);
+        initalMessageQuery.Parameters.AddWithValue("@commandId", request.CommandId);
 
         using(var reader = await initalMessageQuery.ExecuteReaderAsync()){
             if(await reader.ReadAsync()){
