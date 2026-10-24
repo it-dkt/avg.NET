@@ -164,7 +164,15 @@ const onClickCommand = function (e) {
 	const target_id = link_id.substring(3, 6);
 
 	const flag = getFlag();
-	const person = getPersonMode();
+
+	if (target_id) {
+		// when tartget_id is set in the id attribute of clicked element (ex: 'CHK001')
+		// show the result of executing the command to the target
+		getMessage(scene_id, command_id, target_id, flag);
+		// get top level command again
+		getCommands(scene_id);
+		return;
+	}
 
 	// request data for api
 	const data = {
@@ -173,26 +181,14 @@ const onClickCommand = function (e) {
 		flag: flag
 	};
 
-	let success = null;
-	if (target_id) {
-		// callback: when tartget_id is set in the id attributge of clicked element (ex: 'CHK001')
-		success = function (data, dataType) {
-			// show the result of executing the command to the target
-			getMessage(scene_id, command_id, target_id, flag);
-			// get top level command again
-			getCommands(scene_id);
-		}
-
-	} else {
-		// callback: when tartget_id is NOT set (ex: 'CHK')
-		success = function (data, dataType) {
-			if(data.commands && data.commands.length > 0){
-				// if some targets returned, show them 
-				showCommands(data);
-			}else{
-				// if no target returned, only show the default message
-				showMessage(data);
-			}
+	// callback: when tartget_id is NOT set (ex: 'CHK')
+	const success = function (data, dataType) {
+		if(data.commands && data.commands.length > 0){
+			// if some targets returned, show them
+			showCommands(data);
+		}else{
+			// if no target returned, only show the default message
+			showMessage(data);
 		}
 	}
 
@@ -231,7 +227,7 @@ const execAjax = function (url, pData, pSuccess, pError) {
 	}
 
 	// default error callback
-	const error = function (XMLHttpRequest, textStatus, errorThrown) {
+	let error = function (XMLHttpRequest, textStatus, errorThrown) {
 		alert('Error : ' + errorThrown);
 		$("#XMLHttpRequest").html("XMLHttpRequest : " + XMLHttpRequest.status);
 		$("#textStatus").html("textStatus : " + textStatus);
@@ -277,7 +273,8 @@ const showMessage = function (data) {
 const showMessagePart = function (part_index, eventIndex = 0) {
 
 	const div_selector = '#message-area';
-	const messagePart = splitMsgs[part_index];
+	// split by code points, so emoji (surrogate pairs) are not broken
+	const messagePart = Array.from(splitMsgs[part_index]);
 	//console.log('part text : ' + text);
 
 	// clear message area 
@@ -289,18 +286,18 @@ const showMessagePart = function (part_index, eventIndex = 0) {
 	// show charactors one by one
 	const write_text = function () {
 		// if matches defined controll charactors
-		if (messagePart.charAt(index) == MESSAGE_NEWLINE_CHAR) {
+		if (messagePart[index] == MESSAGE_NEWLINE_CHAR) {
 			// new line
-			$(div_selector).html($(div_selector).html() + '<br/>');
-		} else if (messagePart.charAt(index) == MESSAGE_EVENT_CHAR) {
+			$(div_selector).append('<br/>');
+		} else if (messagePart[index] == MESSAGE_EVENT_CHAR) {
 			// execute event
 			//console.log(`# index=${index} executing eventIndex=${eventIndex + eventCount}`);
 			execEvent(eventIndex + eventCount);
 			eventCount++;
-		} else {
-			// normal charactors
-			$(div_selector).html($(div_selector).html() + messagePart.charAt(index));
-			//console.log(index + ' : ' + messagePart.charAt(index));
+		} else if (index < messagePart.length) {
+			// normal charactors (appended as text, so '<' or '&' is shown as it is)
+			$(div_selector).append(document.createTextNode(messagePart[index]));
+			//console.log(index + ' : ' + messagePart[index]);
 		}
 
 		index++;
@@ -371,10 +368,11 @@ const execEvent = function (eventIndex) {
 	if (eventString) {
 		//console.log(`# eventString=${eventString} eventIndex=${eventIndex}`)
 		let eventArray = eventString.split(',');
-		if (sceneEvents[eventArray[eventIndex]] !== 'undefined') {
-			sceneEvents[eventArray[eventIndex]](); 
+		const eventName = eventArray[eventIndex];
+		if (typeof sceneEvents[eventName] === 'function') {
+			sceneEvents[eventName]();
 		} else {
-			alert(eventArray[eventIndex] + 'is NOT a function!');
+			alert(eventName + ' is NOT a function!');
 		}
 	}
 }
@@ -425,6 +423,7 @@ function saveSlot(slot, flag, sceneId) {
 	const data = {
 		flag,
 		sceneId,
+		path: window.location.pathname,
 		savedAt: new Date().toISOString()
 	};
 	localStorage.setItem(STORAGE_KEY + slot, JSON.stringify(data));
@@ -539,7 +538,8 @@ window.showLoadDialog = function () {
 			document.getElementById('avg-save-overlay')?.remove();
 			toast(`Loaded from slot ${s.slot}.`);
 
-			window.location.href = `/scenes/${data.sceneId}.html`;
+			// old save data has no path
+			window.location.href = data.path ?? `/scenes/${data.sceneId}.html`;
 		});
 
 		row.appendChild(info);

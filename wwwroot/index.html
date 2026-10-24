@@ -147,7 +147,8 @@
 				btn.disabled = !data;
 				btn.addEventListener('click', () => {
 					sessionStorage[FLAG_KEY] = data.flag;
-					window.location.href = `/scenes/${data.sceneId}.html`;
+					// old save data has no path
+					window.location.href = data.path ?? `/scenes/${data.sceneId}.html`;
 				});
 
 				row.appendChild(info);

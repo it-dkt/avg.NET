@@ -20,9 +20,9 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        // exceptions in the API are handled by AVGExceptionFilter
         if (!env.IsDevelopment())
         {
-            app.UseExceptionHandler("/Error");
             app.UseHsts();
         }
 

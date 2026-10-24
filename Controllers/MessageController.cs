@@ -1,5 +1,6 @@
 using System.Data;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
 
@@ -62,7 +63,7 @@ public class MessageController : ControllerBase
             Value = request.Flag,
         });
 
-        var reader = await cmd.ExecuteReaderAsync();
+        using var reader = await cmd.ExecuteReaderAsync();
 
         var message = new MessageResponse();
         message.Message = "ERROR: No message!";
@@ -95,7 +96,10 @@ public class MessageResponse
 {
     public string Message { get; set; } = "";
 
-    public ulong Flag { get; set; }
+    // serialized as a string, because JavaScript numbers lose precision above 2^53.
+    // null when no message is found, so the client keeps the current flag.
+    [JsonNumberHandling(JsonNumberHandling.WriteAsString)]
+    public ulong? Flag { get; set; }
 
     public string? Event { get; set; }
 }
