@@ -315,7 +315,10 @@ It is the record of the MESSAGE table that has
 - TARGET_ID: '999'
 
 ## Cancel the command
-You can add a target to cancel the command (for example: '*Cancel*' for the command '*Go*'), just by adding records.  
+While the targets of a command are shown, the player can click the command area outside the targets to cancel the command.  
+Then the message area is cleared, and the top-level commands are shown again. This works for all commands, without any records.
+
+You can also add a target to cancel the command (for example: '*Cancel*' for the command '*Go*'), just by adding records.  
 When the player selects it, its message is shown and the top-level commands are shown again, as with any other target.
 
 Add a TARGET record for each scene that has targets of the command, and one common MESSAGE record:

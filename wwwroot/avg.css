@@ -69,6 +69,11 @@ body {
 	scrollbar-color: white black;
 }
 
+/* while selecting a target: click outside the targets to cancel the command */
+#command-area.selecting-target {
+	cursor: pointer;
+}
+
 #command-area::-webkit-scrollbar {
 	width: 6px;
 }
