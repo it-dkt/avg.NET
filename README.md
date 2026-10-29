@@ -207,7 +207,9 @@ A target is a thing the selected command can be applied to.
 When the player is in a room and selects the command 'check', the targets may be the things in the room (e.g. chair, table, bed ...).
 
 There are also common targets. Those records have SCENE_ID = '00000', like common commands.  
-For example, when the player has an item and selects the command 'use', the item can be a target at all scenes.
+For example, when the player has an item and selects the command 'use', the item can be a target at all scenes.  
+Common targets are shown after the scene-specific targets, with a line between them.  
+So the player can tell the things in the scene from the items they have.
 
 The FLAG column is the condition for whether the target is shown. It is checked by the bitwise operation described in the 'Flag' section.
 

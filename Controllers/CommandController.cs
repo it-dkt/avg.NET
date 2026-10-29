@@ -95,4 +95,7 @@ public class ViewCommandModel
     public int Mode { get; set; } = 0;
 
     public int Forbidden { get; set; } = 0;
+
+    // true for common targets (SCENE_ID = '00000'), false for targets of the scene and top level commands
+    public bool Common { get; set; } = false;
 }

@@ -115,7 +115,7 @@ const showCommands = function (data, dataType) {
 	} else {
 		$('#command-area').removeClass('selecting-target');
 	}
-	commands.forEach(command => {
+	commands.forEach((command, index) => {
 		// target_id of top level command is not set.
 		const target_id = command.targetId ? command.targetId : '';
 
@@ -135,6 +135,11 @@ const showCommands = function (data, dataType) {
 		// set disabled if locked
 		if(!isOk)
 			link.addClass('disabled');
+
+		// draw a line between the targets of the scene and the common targets (ex. items the player has)
+		// (common targets are returned after the targets of the scene)
+		if(command.common && index > 0 && !commands[index - 1].common)
+			link.addClass('common-first');
 
 		$(link).text(command.text);
 

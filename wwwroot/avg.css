@@ -110,6 +110,13 @@ body {
 	color: gray;
 }
 
+/* line between the targets of the scene and the common targets (ex. items the player has) */
+#command-list li.common-first {
+	border-top: dashed 1px gray;
+	margin-top: 4px;
+	padding-top: 4px;
+}
+
 #avg-save-overlay {
 	position: fixed; inset: 0;
 	background: rgba(0,0,0,0.65);

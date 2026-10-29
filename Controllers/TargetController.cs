@@ -15,6 +15,7 @@ public class TargetController : ControllerBase
     private const string GET_TARGET_SQL =
           "SELECT "
         + "  T.COMMAND_ID, T.TARGET_ID, T.TEXT, T.FORBIDDEN, "
+        + "  ( T.SCENE_ID = '00000' ) AS COMMON, " // common targets (ex. items the player has)
         + "  C.MODE "
         + "FROM TARGET T "
         + "INNER JOIN COMMAND C ON "    // join COMMAND to get MODE
@@ -78,7 +79,8 @@ public class TargetController : ControllerBase
                     TargetId = reader.GetString("TARGET_ID"),
                     Mode = reader.GetInt32("MODE"),
                     Text = reader.GetString("TEXT"),
-                    Forbidden = reader.GetInt32("FORBIDDEN")
+                    Forbidden = reader.GetInt32("FORBIDDEN"),
+                    Common = reader.GetBoolean("COMMON")
                 });
             }
         }

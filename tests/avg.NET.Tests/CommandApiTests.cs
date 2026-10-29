@@ -81,6 +81,24 @@ public class CommandApiTests
     }
 
     [Fact]
+    public async Task CommonTargetsAreMarkedAndShownAfterTargetsOfScene()
+    {
+        // flag 2: the player has '姉の手帳' (I01)
+        var response = await _client.GetFromJsonAsync<TargetResponse>("/api/target?sceneId=00001&commandId=CHK&flag=2");
+
+        Assert.Equal(new[] { "001", "002", "I01" }, response!.Commands.Select(c => c.TargetId));
+        Assert.Equal(new[] { false, false, true }, response.Commands.Select(c => c.Common));
+    }
+
+    [Fact]
+    public async Task TopLevelCommandsAreNotCommonTargets()
+    {
+        var response = await _client.GetFromJsonAsync<CommandResponse>("/api/command?sceneId=00001");
+
+        Assert.All(response!.Commands, c => Assert.False(c.Common));
+    }
+
+    [Fact]
     public async Task DefaultMessageOfCommandWhenNoTarget()
     {
         var response = await _client.GetFromJsonAsync<TargetResponse>("/api/target?sceneId=00001&commandId=USE&flag=0");
