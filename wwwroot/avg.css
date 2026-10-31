@@ -11,6 +11,9 @@ body {
 #main-area {
 	width: 560px;
 	margin: 0 auto;	/* center horizontally in the window */
+	/* don't select text when clicking the messages or commands quickly */
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 /* bigger screens: scale the whole game up in steps, only while it still fits (phones stay at 1x) */
